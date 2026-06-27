@@ -39,25 +39,11 @@
       "**/*.tfstate": true,
       "**/*.tfstate.backup": true
     },
-    "workbench.colorCustomizations": {
-      "window.activeBorder": "#ff383b",
-      "window.inactiveBorder": "#a6282a",
-      "titleBar.activeBackground": "#1e0506",
-      "titleBar.activeForeground": "#ffd700",
-      "titleBar.inactiveBackground": "#140304",
-      "titleBar.inactiveForeground": "#a68800",
-      "statusBar.background": "#ff383b",
-      "statusBar.foreground": "#ffffff",
-      "activityBar.background": "#2a090b",
-      "activityBar.activeBorder": "#ffd700",
-      "activityBar.foreground": "#ffd700",
-      "editor.background": "#0d0203",
-      "sideBar.background": "#120304",
-      "sideBar.foreground": "#ffd700",
-      "sideBarSectionHeader.background": "#1e0506",
-      "sideBarSectionHeader.foreground": "#ff383b",
-      "terminal.background": "#050001"
-    }
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "editor.minimap.enabled": true,
+    "editor.renderWhitespace": "selection",
+    "telemetry.telemetryLevel": "off"
   },
   "launch": {
     "version": "0.2.0",
