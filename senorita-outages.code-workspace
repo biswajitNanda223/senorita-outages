@@ -27,6 +27,10 @@
     {
       "name": "[Guide] kubernetes-and-docker",
       "path": "docs/kubernetes-and-docker"
+    },
+    {
+      "name": "[Documentation] architectural-hlds",
+      "path": "docs"
     }
   ],
   "settings": {
