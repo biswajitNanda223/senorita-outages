@@ -40,18 +40,113 @@
       "**/*.tfstate.backup": true
     },
     "workbench.colorCustomizations": {
-      "window.activeBorder": "#d9383a",
+      "window.activeBorder": "#ff383b",
       "window.inactiveBorder": "#a6282a",
-      "titleBar.activeBackground": "#1a0809",
-      "titleBar.activeForeground": "#f5c542",
-      "titleBar.inactiveBackground": "#140607",
-      "titleBar.inactiveForeground": "#a68832",
-      "statusBar.background": "#d9383a",
+      "titleBar.activeBackground": "#1e0506",
+      "titleBar.activeForeground": "#ffd700",
+      "titleBar.inactiveBackground": "#140304",
+      "titleBar.inactiveForeground": "#a68800",
+      "statusBar.background": "#ff383b",
       "statusBar.foreground": "#ffffff",
-      "activityBar.background": "#1f090a",
-      "activityBar.activeBorder": "#f5c542",
-      "activityBar.foreground": "#f5c542"
+      "activityBar.background": "#2a090b",
+      "activityBar.activeBorder": "#ffd700",
+      "activityBar.foreground": "#ffd700",
+      "editor.background": "#0d0203",
+      "sideBar.background": "#120304",
+      "sideBar.foreground": "#ffd700",
+      "sideBarSectionHeader.background": "#1e0506",
+      "sideBarSectionHeader.foreground": "#ff383b",
+      "terminal.background": "#050001"
     }
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "🦸 Debug Fastify Backend Hero",
+        "skipFiles": ["<node_internals>/**"],
+        "program": "${workspaceFolder:🦸 Fastify Backend Hero}/server.js",
+        "env": {
+          "NODE_ENV": "development",
+          "PORT": "8080",
+          "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/postgres",
+          "REDIS_URL": "redis://localhost:6379"
+        }
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "🤖 Debug AI Agent Engine",
+        "skipFiles": ["<node_internals>/**"],
+        "program": "${workspaceFolder:🤖 AI Agent Engine}/server.js",
+        "env": {
+          "NODE_ENV": "development",
+          "PORT": "9000",
+          "ENABLE_TRACING": "true",
+          "REDIS_HOST": "localhost",
+          "AGENT_WORKSPACE_BUCKET": "my-local-agent-bucket"
+        }
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "🎭 Action! Start Local Dev Server",
+        "type": "shell",
+        "command": "npm run dev",
+        "options": {
+          "cwd": "${workspaceFolder:🦸 Fastify Backend Hero}"
+        },
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "label": "🤖 Brainstorm! Start Agent Engine",
+        "type": "shell",
+        "command": "npm start",
+        "options": {
+          "cwd": "${workspaceFolder:🤖 AI Agent Engine}"
+        },
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+      },
+      {
+        "label": "🛡️ Interrogate! Run Pre-Commit Hook",
+        "type": "shell",
+        "command": "bash ./cicd/scripts/pre-commit.sh",
+        "options": {
+          "cwd": "${workspaceFolder:🎬 Repository Root}"
+        },
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "🏗️ Direct! Terraform Validate",
+        "type": "shell",
+        "command": "terraform validate",
+        "options": {
+          "cwd": "${workspaceFolder:🏗️ Terraform Cloud Stage}/azure"
+        },
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      }
+    ]
   },
   "extensions": {
     "recommendations": [
