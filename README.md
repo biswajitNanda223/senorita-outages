@@ -18,6 +18,7 @@ Welcome to the Multi-Cloud DevOps Monorepo. This repository provides an end-to-e
 │   ├── gcp-hld.md                      # GCP Design: GKE, Cloud Run, Memorystore, Cloud SQL, Cloud DNS
 │   ├── network-security.md             # Firewall configs, domain whitelisting, private link, DNS maps
 │   ├── compute-decision-matrix.md      # Compute Decision Guide: "When to use what"
+│   ├── masala-ops.md                   # MasalaOps: Cinematic Cloud learning guide
 │   ├── eraser/                         # Eraser.io Diagram-as-Code files (DSL files)
 │   │   ├── azure-architecture.txt
 │   │   ├── aws-architecture.txt
