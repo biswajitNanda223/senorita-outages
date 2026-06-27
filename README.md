@@ -23,6 +23,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── network-security.md             # Egress domain whitelists, firewalls, and Private DNS
 │   ├── compute-decision-matrix.md      # Matrix comparison: "When to use what compute"
 │   ├── masala-ops.md                   # MasalaOps: Dramatic cinematic Cloud learning guide
+│   ├── vpc-guide.md                    # VPC Mapping Guide: AWS vs Azure vs GCP networking
 │   ├── images/                         # Generated high-resolution blueprints
 │   │   ├── repo_banner.png             # Wide thematic repository banner
 │   │   ├── azure_architecture.png      # Azure network architecture
