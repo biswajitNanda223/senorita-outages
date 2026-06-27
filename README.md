@@ -1,5 +1,3 @@
-![Senorita Outages Banner](docs/images/repo_banner.png)
-
 # 💃 Senorita Outages: The Dramatic Multi-Cloud DevOps Monorepo
 
 Welcome to **Senorita Outages**, the most dramatic, high-performance, and feature-packed multi-cloud monorepo on GitHub. 
