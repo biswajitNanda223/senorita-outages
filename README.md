@@ -28,6 +28,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── secrets-management.md           # HLD: Key Vault / Secrets Manager with Managed Identity SDK
 │   ├── gitlab-workers-and-environments.md # HLD: GitLab runners, manual gates, multi-environment states
 │   ├── agent-adk-memory-banks.md       # HLD: ADK Agent Architecture, short/long-term memory banks
+│   ├── azure-connection-guide.md       # Guide: Connect GitLab to AKS using OIDC & Key Vault access rules
 │   ├── images/                         # Generated high-resolution blueprints
 │   │   ├── azure_architecture.png      # Azure network architecture
 │   │   ├── azure_vm_runner_flow.png    # Azure VM Runner flow
