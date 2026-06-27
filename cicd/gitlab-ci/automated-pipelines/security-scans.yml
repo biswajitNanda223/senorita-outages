@@ -1,0 +1,19 @@
+# cicd/gitlab-ci/automated-pipelines/security-scans.yml
+# Automated Trivy security checks triggered on main branch integrations
+
+trivy-scan:
+  stage: test
+  image: 
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  tags:
+    - docker
+  script:
+    - echo "Running Trivy vulnerabilities scan on container repositories..."
+    # Scan filesystem configurations for IaC leaks
+    - trivy config .
+    # Scan mock built image filesystem
+    - trivy fs --scanners vuln --exit-code 1 --severity HIGH,CRITICAL demo-app/
+    - trivy fs --scanners vuln --exit-code 1 --severity HIGH,CRITICAL agent-engine/
+  only:
+    - main

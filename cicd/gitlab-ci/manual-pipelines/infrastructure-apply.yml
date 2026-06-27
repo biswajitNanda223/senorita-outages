@@ -1,0 +1,33 @@
+# cicd/gitlab-ci/manual-pipelines/infrastructure-apply.yml
+# Infrastructure deployment templates featuring manual gates
+
+.tf_base:
+  image: hashicorp/terraform:latest
+  tags:
+    - docker
+  before_script:
+    - cd terraform/azure # default target Azure workspace
+
+tf-plan:
+  extends: .tf_base
+  stage: build
+  script:
+    - terraform init
+    - terraform plan -out=tfplan
+  artifacts:
+    name: "tfplan"
+    paths:
+      - terraform/azure/tfplan
+
+tf-apply:
+  extends: .tf_base
+  stage: deploy_dev
+  script:
+    - terraform init
+    - terraform apply -input=false tfplan
+  dependencies:
+    - tf-plan
+  when: manual              # <--- Forces manual execution approval gate
+  allow_failure: false
+  only:
+    - main

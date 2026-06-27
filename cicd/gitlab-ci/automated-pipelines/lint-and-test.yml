@@ -1,0 +1,33 @@
+# cicd/gitlab-ci/automated-pipelines/lint-and-test.yml
+# Automated validation steps triggered immediately on every git commit push
+
+.lint_base:
+  image: alpine:latest
+  tags:
+    - docker
+
+docker-lint:
+  extends: .lint_base
+  stage: test
+  image: hadolint/hadolint:latest-alpine
+  script:
+    - echo "Linting Dockerfiles..."
+    - find . -name "Dockerfile" -not -path "*/node_modules/*" | xargs hadolint
+
+terraform-validate:
+  extends: .lint_base
+  stage: test
+  image: hashicorp/terraform:latest
+  script:
+    - echo "Validating Terraform templates..."
+    - cd terraform/azure && terraform init -backend=false && terraform validate
+    - cd ../aws && terraform init -backend=false && terraform validate
+    - cd ../gcp && terraform init -backend=false && terraform validate
+
+manifest-lint:
+  extends: .lint_base
+  stage: test
+  image: instrumenta/kube-linter:latest-alpine
+  script:
+    - echo "Running kube-linter on Kubernetes manifests..."
+    - kube-linter lint manifests/

@@ -1,0 +1,33 @@
+# cicd/gitlab-ci/manual-pipelines/production-release.yml
+# Production rollout template with manual gates to prevent accidental deployments
+
+prod-deploy-azure:
+  stage: deploy_prod
+  image: mcr.microsoft.com/azure-cli:latest
+  tags:
+    - docker
+  script:
+    - echo "Logging into Azure via OIDC..."
+    - az login --service-principal -u $AZURE_CLIENT_ID -t $AZURE_TENANT_ID --federated-token $CI_JOB_JWT_V2
+    - az aks get-credentials --resource-group rg-enterprise-prod --name aks-enterprise-prod
+    - kubectl apply -f manifests/azure/
+  when: manual              # <--- Blocks automated run; requires UI play trigger
+  allow_failure: false
+  only:
+    - main
+
+prod-deploy-gcp:
+  stage: deploy_prod
+  image: google/cloud-sdk:latest
+  tags:
+    - docker
+  script:
+    - echo "Logging into GCP via Service Key..."
+    - echo "$GCP_SERVICE_KEY" > key.json
+    - gcloud auth activate-service-account --key-file=key.json
+    - gcloud container clusters get-credentials gke-enterprise-prod --region us-central1 --project enterprise-prod-proj
+    - kubectl apply -f manifests/gcp/
+  when: manual              # <--- Blocks automated run; requires UI play trigger
+  allow_failure: false
+  only:
+    - main

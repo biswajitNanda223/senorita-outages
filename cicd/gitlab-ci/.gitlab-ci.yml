@@ -1,142 +1,26 @@
-# Main .gitlab-ci.yml
-# Orchestrates multi-cloud infrastructure changes, container syncs, and application deployments
+# .gitlab-ci.yml
+# Root pipeline config importing automated validation and manual approval deployment gates
 
 stages:
-  - lint
-  - build
   - test
-  - deploy
+  - build
+  - deploy_dev
+  - deploy_prod
 
+# Reusable Pipeline Config Imports
 include:
-  - local: '/cicd/gitlab-ci/templates/build-push-sync.yml'
-  - local: '/cicd/gitlab-ci/templates/tf-lifecycle.yml'
-  - local: '/cicd/gitlab-ci/templates/k8s-deploy.yml'
+  # 1. Automated pipelines triggered on push
+  - local: '/cicd/gitlab-ci/automated-pipelines/lint-and-test.yml'
+  - local: '/cicd/gitlab-ci/automated-pipelines/security-scans.yml'
+  
+  # 2. Manual pipelines triggered by approval clicks in the UI
+  - local: '/cicd/gitlab-ci/manual-pipelines/infrastructure-apply.yml'
+  - local: '/cicd/gitlab-ci/manual-pipelines/production-release.yml'
 
 #---------------------------------------------------------
 # GLOBAL VARIABLES
 #---------------------------------------------------------
 variables:
-  CI_REGISTRY_IMAGE: "registry.gitlab.com/enterprise/my-core-app"
-
-#---------------------------------------------------------
-# LINT STAGE JOBS
-#---------------------------------------------------------
-dockerfile-lint:
-  extends: .hadolint
-
-terraform-azure-validate:
-  extends: .terraform-validate
-  before_script:
-    - cd terraform/azure
-
-terraform-aws-validate:
-  extends: .terraform-validate
-  before_script:
-    - cd terraform/aws
-
-terraform-gcp-validate:
-  extends: .terraform-validate
-  before_script:
-    - cd terraform/gcp
-
-k8s-manifests-lint:
-  extends: .k8s-lint
-
-#---------------------------------------------------------
-# BUILD & SCAN STAGE JOBS
-#---------------------------------------------------------
-build-gitlab-registry-image:
-  extends: .build-gitlab-registry
-
-security-scan-image:
-  extends: .trivy-scan
-  needs:
-    - build-gitlab-registry-image
-
-terraform-azure-scan:
-  extends: .terraform-sec-scan
-  before_script:
-    - cd terraform/azure
-
-terraform-aws-scan:
-  extends: .terraform-sec-scan
-  before_script:
-    - cd terraform/aws
-
-terraform-gcp-scan:
-  extends: .terraform-sec-scan
-  before_script:
-    - cd terraform/gcp
-
-#---------------------------------------------------------
-# PIPELINE PLANS
-#---------------------------------------------------------
-terraform-azure-plan:
-  extends: .terraform-plan
-  before_script:
-    - cd terraform/azure
-
-terraform-aws-plan:
-  extends: .terraform-plan
-  before_script:
-    - cd terraform/aws
-
-terraform-gcp-plan:
-  extends: .terraform-plan
-  before_script:
-    - cd terraform/gcp
-
-#---------------------------------------------------------
-# DEPLOYMENT STAGE JOBS (SYNC & COMPUTE DEPLOY)
-#---------------------------------------------------------
-sync-to-azure-acr:
-  extends: .sync-to-cloud
-  variables:
-    CLOUD_IMAGE: "acrenterprisedevopsdev.azurecr.io/app-backend:latest"
-    CLOUD_PROVIDER: "azure"
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-sync-to-aws-ecr:
-  extends: .sync-to-cloud
-  variables:
-    CLOUD_IMAGE: "123456789012.dkr.ecr.us-east-1.amazonaws.com/enterprise-ecr-dev:latest"
-    CLOUD_PROVIDER: "aws"
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-sync-to-gcp-gar:
-  extends: .sync-to-cloud
-  variables:
-    CLOUD_IMAGE: "us-central1-docker.pkg.dev/enterprise-devops-project/enterprise-registry-dev/app-backend:latest"
-    CLOUD_PROVIDER: "gcp"
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-deploy-to-aks:
-  extends: .k8s-deploy
-  variables:
-    KUBECONFIG_DATA: "$AZURE_AKS_KUBECONFIG"
-  before_script:
-    # Set context target
-    - cd manifests/azure
-  needs:
-    - sync-to-azure-acr
-
-deploy-to-eks:
-  extends: .k8s-deploy
-  variables:
-    KUBECONFIG_DATA: "$AWS_EKS_KUBECONFIG"
-  before_script:
-    - cd manifests/aws
-  needs:
-    - sync-to-aws-ecr
-
-deploy-to-gke:
-  extends: .k8s-deploy
-  variables:
-    KUBECONFIG_DATA: "$GCP_GKE_KUBECONFIG"
-  before_script:
-    - cd manifests/gcp
-  needs:
-    - sync-to-gcp-gar
+  CI_REGISTRY_IMAGE: "registry.gitlab.com/biswajitnanda223/senorita-outages"
+  AZURE_CLIENT_ID: "00000000-0000-0000-0000-000000000000"
+  AZURE_TENANT_ID: "00000000-0000-0000-0000-000000000000"
