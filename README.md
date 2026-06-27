@@ -30,14 +30,16 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   │   ├── aws_architecture.png        # AWS VPC architecture
 │   │   ├── gcp_architecture.png        # GCP VPC architecture
 │   │   ├── demo_deployment_flow.png    # Container application flow
-│   │   └── compute_decision_tree.png   # Compute decision flowchart
+│   │   ├── compute_decision_tree.png   # Compute decision flowchart
+│   │   └── vpc_ingress_loadbalancer_flow.png # VPC Ingress Load Balancer flow
 │   └── eraser/                         # Eraser.io Diagram-as-Code DSL text files
 │       ├── azure-architecture.txt
 │       ├── aws-architecture.txt
 │       ├── gcp-architecture.txt
 │       ├── demo-deployment-flow.txt
 │       ├── compute-decision-tree.txt
-│       └── agent-engine-flow.txt
+│       ├── agent-engine-flow.txt
+│       └── vpc-ingress-flow.txt
 ├── terraform/                          # Infrastructure provisioning (IaC)
 │   ├── azure/                          # VNet, VM Runner, AKS, ACR, Log Analytics, KV, Blob (main.tf, outputs.tf)
 │   ├── aws/                            # VPC, EKS, ECS, Cognito, RDS Postgres, ElastiCache Redis
@@ -54,7 +56,8 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 ├── manifests/                          # Runtime deployment specs
 │   ├── azure/                          # Ingress definitions & ACA YAML templates
 │   ├── aws/                            # EKS deployment YAMLs & ECS task JSONs
-│   └── gcp/                            # GKE service routing & Cloud Run service YAMLs
+│   ├── gcp/                            # GKE service routing & Cloud Run service YAMLs
+│   └── kubernetes-templates/           # Standard Namespace, ConfigMap, Secrets, Service, Ingress blueprints
 ├── demo-app/                           # Multi-cloud Node.js + Fastify demo project
 │   ├── package.json
 │   ├── server.js                       # Connects to PG DB + Redis caching, serves APIs
@@ -126,6 +129,29 @@ graph TD
     npm install
     npm start
     ```
+
+---
+
+## ☸️ Standardized Kubernetes Deployments & Ingress Routing
+
+Workload deployments in private networks require layered routing and secure credential injections. Clean templates are available under `/manifests/kubernetes-templates`.
+
+### 1. Workload Orchestration & Credential Injections
+*   **Isolated Namespaces:** WORKLOADS are deployed inside dedicated namespaces (`namespace.yaml`) to isolate networking and RBAC.
+*   **ConfigMaps (`configmap.yaml`):** Store non-sensitive keys (hosts, ports, logs).
+*   **Secrets (`secret.yaml`):** Sensitive parameters must be **Base64 encoded** to be injected into pods:
+    *   *To base64 encode:* `echo -n 'password' | base64` (e.g. `ZGJhZG1pbg==` for `dbadmin`).
+    *   *To base64 decode:* `echo -n 'ZGJhZG1pbg==' | base64 --decode`.
+
+### 2. VPC Load Balancer Routing Flow
+The following diagram details how an HTTPS client request maps into the isolated container pods via Load Balancers and Ingress Controllers:
+
+![VPC Ingress Load Balancer Flow](docs/images/vpc_ingress_loadbalancer_flow.png)
+
+1.  **Ingress Gateway:** Requests are validated by a public Load Balancer carrying WAF protections.
+2.  **Private Network Pass:** Traffic is forwarded into the private subnet, targeting the internal **Ingress Controller** Pods.
+3.  **Ingress Rule Matching (`ingress.yaml`):** Paths are mapped to internal **Service ClusterIP** endpoints (`service.yaml`).
+4.  **Backend Load Balancing:** The ClusterIP service distributes traffic across replicated Fastify pods.
 
 ---
 

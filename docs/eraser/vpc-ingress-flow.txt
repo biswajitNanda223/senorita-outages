@@ -1,0 +1,34 @@
+// VPC Ingress & Load Balancer Routing Flow
+// Copy this code into https://app.eraser.io
+
+Client [icon: monitor, label: "Client HTTPS Request"]
+
+subgraph Cloud_Network
+  Internet_Gateway [icon: gcp, label: "Internet Gateway"]
+  
+  subgraph Public_DMZ
+    Load_Balancer [icon: gcp-load-balancing, label: "Public HTTPS Load Balancer (WAF/Cloud Armor)"]
+  end
+
+  subgraph VPC_Private_Subnets [color: blue]
+    subgraph Kubernetes_Cluster
+      Ingress_Controller [icon: gcp-cloud-run, label: "Ingress Controller (NGINX / NodePort)"]
+      ClusterIP_Service [icon: gcp, label: "Kubernetes Service (ClusterIP)"]
+      
+      subgraph Replicated_Pods [color: green]
+        Pod_1 [icon: docker, label: "Fastify App Pod 1"]
+        Pod_2 [icon: docker, label: "Fastify App Pod 2"]
+        Pod_3 [icon: docker, label: "Fastify App Pod 3"]
+      end
+    end
+  end
+end
+
+// Ingress Routing Flow
+Client -> Internet_Gateway: Route traffic
+Internet_Gateway -> Load_Balancer: Forward request
+Load_Balancer -> Ingress_Controller: Route inside private Node subnet
+Ingress_Controller -> ClusterIP_Service: Match hostname & path
+ClusterIP_Service -> Pod_1: Load Balance (Round-Robin)
+ClusterIP_Service -> Pod_2: Load Balance (Round-Robin)
+ClusterIP_Service -> Pod_3: Load Balance (Round-Robin)

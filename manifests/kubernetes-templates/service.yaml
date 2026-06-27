@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: enterprise-app-service
+  namespace: enterprise-apps
+  labels:
+    app: enterprise-backend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: enterprise-backend

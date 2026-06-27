@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enterprise-app-deployment
+  namespace: enterprise-apps
+  labels:
+    app: enterprise-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: enterprise-backend
+  template:
+    metadata:
+      labels:
+        app: enterprise-backend
+    spec:
+      securityContext:
+        # Enforce non-root execution matching Dockerfile specs
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        runAsNonRoot: true
+
+      containers:
+      - name: fastify-backend
+        image: enterpriseregistry.azurecr.io/app-backend:latest
+        imagePullPolicy: IfNotPresent
+        
+        ports:
+        - containerPort: 8080
+          name: http
+          
+        # Inject non-sensitive configurations from ConfigMap
+        envFrom:
+        - configMapRef:
+            name: enterprise-app-config
+            
+        # Inject sensitive secrets from Kubernetes Secret
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: enterprise-app-secrets
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: enterprise-app-secrets
+              key: DB_PASSWORD
+
+        # Health Checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi

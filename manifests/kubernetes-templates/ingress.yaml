@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: enterprise-app-ingress
+  namespace: enterprise-apps
+  annotations:
+    # Use standard NGINX Ingress Controller class
+    kubernetes.io/ingress.class: "nginx"
+    # SSL/TLS redirection annotation
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Connection timeout settings
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "15"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+spec:
+  rules:
+  - host: "app.enterprise.private.internal"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: enterprise-app-service
+            port:
+              number: 80
