@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: enterprise-project
+  namespace: argocd
+spec:
+  description: "Secure GitOps project boundary for Senorita Outages microservices"
+  
+  # Allow deployments only within target production namespace
+  destinations:
+  - namespace: production
+    server: https://kubernetes.default.svc
+
+  # Allow syncing resources from our specific git repository
+  sourceRepos:
+  - https://github.com/biswajitNanda223/senorita-outages.git
+
+  # Permit standard Kubernetes deployment resources
+  clusterResourceWhitelist:
+  - group: ""
+    kind: Namespace
+
+  namespaceResourceWhitelist:
+  - group: "*"
+    kind: "*"

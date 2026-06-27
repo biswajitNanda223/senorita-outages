@@ -71,7 +71,8 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── azure/                          # Ingress, ACA, and Agent Engine ACA templates
 │   ├── aws/                            # EKS deployment YAMLs & ECS task JSONs
 │   ├── gcp/                            # GKE services, GKE deploys, and Agent Engine Cloud Run YAMLs
-│   └── kubernetes-templates/           # Standard Namespace, ConfigMap, Secrets, Service, Ingress blueprints
+│   ├── kubernetes-templates/           # Standard Namespace, ConfigMap, Secrets, Service, Ingress blueprints
+│   └── argocd/                         # GitOps Application & AppProject manifests and setup guides
 ├── demo-app/                           # Multi-cloud Node.js + Fastify demo project
 │   ├── package.json
 │   ├── server.js                       # Connects to PG DB + Redis caching, serves APIs

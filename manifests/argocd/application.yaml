@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fastify-backend-gitops
+  namespace: argocd
+spec:
+  project: enterprise-project
+  source:
+    repoURL: https://github.com/biswajitNanda223/senorita-outages.git
+    targetRevision: HEAD
+    path: manifests/kubernetes-templates # Path inside repo containing manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production # Deploys into target namespace
+  syncPolicy:
+    automated:
+      prune: true     # Automatically deletes resources removed from Git
+      selfHeal: true  # Automatically overrides changes made directly in cluster (drift detection)
+    syncOptions:
+    - CreateNamespace=true # Create target namespace if not exists
