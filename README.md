@@ -53,18 +53,17 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   └── gcp/                            # VPC, GKE, Cloud Run, Cloud SQL, Memorystore Redis, Cloud Trace APIs
 ├── cicd/                               # Pipelines and sync logic
 │   ├── gitlab-ci/
-│   │   ├── templates/                  # Reusable build, test, and deploy steps
-│   │   │   ├── build-push-sync.yml     # Trivy container scans & registry mirroring
-│   │   │   ├── tf-lifecycle.yml        # IaC validate, plan, and manual applies
-│   │   │   └── k8s-deploy.yml          # Kube-linter & kubectl apply
-│   │   └── .gitlab-ci.yml              # Root pipelines coordinating the build flows
+│   │   ├── automated-pipelines/        # Lint, Validate, and Trivy scans yml templates
+│   │   ├── manual-pipelines/           # Manual approval gate deploy templates
+│   │   ├── runner-setup/               # GitLab runner VM setup README and config.toml
+│   │   └── .gitlab-ci.yml              # Root pipelines importing sub-folders
 │   └── scripts/
 │       ├── sync-registry.sh            # Safe container mirroring script using skopeo/docker
 │       └── pre-commit.sh               # Git pre-commit validator (Hadolint, TF format, yamllint)
 ├── manifests/                          # Runtime deployment specs
-│   ├── azure/                          # Ingress definitions & ACA YAML templates
+│   ├── azure/                          # Ingress, ACA, and Agent Engine ACA templates
 │   ├── aws/                            # EKS deployment YAMLs & ECS task JSONs
-│   ├── gcp/                            # GKE service routing & Cloud Run service YAMLs
+│   ├── gcp/                            # GKE services, GKE deploys, and Agent Engine Cloud Run YAMLs
 │   └── kubernetes-templates/           # Standard Namespace, ConfigMap, Secrets, Service, Ingress blueprints
 ├── demo-app/                           # Multi-cloud Node.js + Fastify demo project
 │   ├── package.json

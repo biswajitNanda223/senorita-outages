@@ -1,0 +1,27 @@
+identity:
+  type: SystemAssigned
+properties:
+  managedEnvironmentId: /subscriptions/0000-0000/resourceGroups/rg-enterprise-prod/providers/Microsoft.App/managedEnvironments/cae-enterprise-prod
+  configuration:
+    activeRevisionsMode: Single
+    ingress:
+      external: false
+      targetPort: 8080
+      transport: auto
+  template:
+    containers:
+    - name: agent-engine
+      image: acrenterprisedevopsdev.azurecr.io/agent-engine:latest
+      env:
+      - name: ENABLE_TRACING
+        value: "true"
+      - name: REDIS_HOST
+        value: "redis-enterprise.redis.cache.windows.net"
+      - name: AGENT_WORKSPACE_BUCKET
+        value: "enterprise-agent-workspace-prod"
+      resources:
+        cpu: 0.5
+        memory: 1.0Gi
+    scale:
+      minReplicas: 1
+      maxReplicas: 5
