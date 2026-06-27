@@ -19,6 +19,14 @@
     {
       "name": "[Manifests] kubernetes-specifications",
       "path": "manifests"
+    },
+    {
+      "name": "[Guide] azure-ai-foundry",
+      "path": "docs/azure-ai-foundry"
+    },
+    {
+      "name": "[Guide] kubernetes-and-docker",
+      "path": "docs/kubernetes-and-docker"
     }
   ],
   "settings": {
