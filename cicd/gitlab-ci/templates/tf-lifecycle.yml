@@ -1,0 +1,41 @@
+# tf-lifecycle.yml
+# Reusable GitLab CI/CD template for Terraform validation, scanning, and deployment
+
+.terraform-validate:
+  stage: lint
+  image: hashicorp/terraform:1.6.0
+  script:
+    - terraform init -backend=false
+    - terraform validate
+    - terraform fmt -check
+
+.terraform-sec-scan:
+  stage: test
+  image: aquasec/trivy:latest
+  script:
+    # Scan IaC for misconfigurations
+    - trivy config --exit-code 1 --severity HIGH,CRITICAL .
+
+.terraform-plan:
+  stage: build
+  image: hashicorp/terraform:1.6.0
+  script:
+    - terraform init
+    - terraform plan -out=tfplan
+  artifacts:
+    name: "tfplan-$CI_COMMIT_REF_NAME"
+    paths:
+      - tfplan
+    expire_in: 2 days
+
+.terraform-apply:
+  stage: deploy
+  image: hashicorp/terraform:1.6.0
+  script:
+    - terraform init
+    - terraform apply -input=false tfplan
+  dependencies:
+    - terraform-plan
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual # Force manual approval for production changes

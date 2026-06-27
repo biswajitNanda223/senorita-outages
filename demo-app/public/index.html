@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise DevOps Cloud Portal</title>
+  <!-- Google Fonts Outfit & Cinzel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b0c10;
+      --panel-bg: rgba(26, 26, 36, 0.45);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --glow-azure: rgba(0, 242, 254, 0.15);
+      
+      --color-primary: #00f2fe;
+      --color-secondary: #4facfe;
+      --color-success: #00ff87;
+      --color-danger: #ff007f;
+      --text-main: #f5f5f7;
+      --text-muted: #8e8e93;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-color);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 242, 254, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(79, 172, 254, 0.05) 0%, transparent 40%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      overflow-x: hidden;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .cloud-badges {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .cloud-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: 50px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .cloud-badge.azure { color: #00f2fe; border-color: rgba(0, 242, 254, 0.3); }
+    .cloud-badge.aws { color: #ff9900; border-color: rgba(255, 153, 0, 0.3); }
+    .cloud-badge.gcp { color: #4285f4; border-color: rgba(66, 133, 244, 0.3); }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .glass-card {
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 15px var(--glow-azure);
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Status Items */
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .status-item:last-child {
+      border-bottom: none;
+    }
+
+    .status-label {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .status-value {
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .connected { color: var(--color-success); }
+    .disconnected { color: var(--color-danger); }
+
+    /* Interactive Form Elements */
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    button {
+      width: 100%;
+      padding: 0.85rem;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    /* Logs & Outputs */
+    .api-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .output-container {
+      margin-top: 1.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      padding: 1rem;
+      max-height: 250px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+
+    .log-entry {
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      padding-bottom: 0.4rem;
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .source-badge {
+      display: inline-block;
+      padding: 0.15rem 0.4rem;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      font-weight: 700;
+      margin-right: 0.5rem;
+    }
+
+    .badge-db { background: rgba(0, 255, 135, 0.15); color: var(--color-success); }
+    .badge-cache { background: rgba(0, 242, 254, 0.15); color: var(--color-primary); }
+
+    footer {
+      margin-top: auto;
+      padding-top: 3rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="cloud-badges">
+      <span class="cloud-badge azure">Azure</span>
+      <span class="cloud-badge aws">AWS</span>
+      <span class="cloud-badge gcp">GCP</span>
+    </div>
+    <h1>Enterprise DevOps Cloud Portal</h1>
+    <p class="subtitle">Real-time Multi-Cloud Workload Status & Datastore Verification</p>
+  </header>
+
+  <main class="grid-container">
+    
+    <!-- Left Panel: Infrastructure Health -->
+    <div class="glass-card">
+      <h2>🔌 System Connections</h2>
+      <div id="connection-list">
+        <div class="status-item">
+          <span class="status-label">PostgreSQL Database</span>
+          <span id="db-status" class="status-value disconnected"><span class="status-dot"></span>Checking...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Redis Cache</span>
+          <span id="redis-status" class="status-value disconnected"><span class="status-dot"></span>Checking...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Environment Scope</span>
+          <span id="env-scope" class="status-value">Loading...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Hostname (Pod)</span>
+          <span id="pod-hostname" class="status-value" style="font-family: monospace;">Loading...</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Platform Engine</span>
+          <span id="platform-engine" class="status-value">Loading...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Data Controller -->
+    <div class="glass-card">
+      <h2>💾 Cache & Database Controller</h2>
+      <form id="data-form">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" id="title" placeholder="e.g. Server Launch Event" required>
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" rows="2" placeholder="Write description metadata..."></textarea>
+        </div>
+        <button type="submit">Submit to Cluster DB</button>
+      </form>
+
+      <div class="api-controls">
+        <button type="button" id="btn-fetch" class="btn-secondary">Fetch Data Entries</button>
+      </div>
+
+      <div id="output" class="output-container">
+        <div class="log-entry">Output logs will display here...</div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Enterprise Multi-Cloud DevOps Monorepo. Deployed via Private Networking & Secure Registries.</p>
+  </footer>
+
+  <script>
+    const outputEl = document.getElementById('output');
+    const form = document.getElementById('data-form');
+
+    // 1. Fetch info and connections status on load
+    async function loadStatus() {
+      try {
+        const healthRes = await fetch('/health');
+        const health = await healthRes.json();
+        
+        // Update DB
+        const dbStatusEl = document.getElementById('db-status');
+        if (health.db === 'connected') {
+          dbStatusEl.innerHTML = '<span class="status-dot"></span>Connected';
+          dbStatusEl.className = 'status-value connected';
+        } else {
+          dbStatusEl.innerHTML = '<span class="status-dot"></span>Failed';
+          dbStatusEl.className = 'status-value disconnected';
+        }
+
+        // Update Redis
+        const redisStatusEl = document.getElementById('redis-status');
+        if (health.redis === 'connected') {
+          redisStatusEl.innerHTML = '<span class="status-dot"></span>Active';
+          redisStatusEl.className = 'status-value connected';
+        } else {
+          redisStatusEl.innerHTML = '<span class="status-dot"></span>Inactive';
+          redisStatusEl.className = 'status-value disconnected';
+        }
+      } catch (err) {
+        console.error('Error fetching health status:', err);
+      }
+
+      try {
+        const infoRes = await fetch('/api/info');
+        const info = await infoRes.json();
+
+        document.getElementById('env-scope').textContent = info.envVariables.ENVIRONMENT.toUpperCase();
+        document.getElementById('pod-hostname').textContent = info.hostname;
+        document.getElementById('platform-engine').textContent = `Node ${info.nodeVersion}`;
+      } catch (err) {
+        console.error('Error fetching environment info:', err);
+      }
+    }
+
+    // Write a log entry
+    function log(message, source = '') {
+      let badgeHtml = '';
+      if (source === 'database') {
+        badgeHtml = '<span class="source-badge badge-db">DB</span>';
+      } else if (source === 'cache') {
+        badgeHtml = '<span class="source-badge badge-cache">Cache</span>';
+      }
+      
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `${badgeHtml} <strong>[${new Date().toLocaleTimeString()}]:</strong> ${message}`;
+      
+      if (outputEl.firstChild && outputEl.firstChild.textContent.includes('Output logs')) {
+        outputEl.innerHTML = '';
+      }
+      outputEl.insertBefore(entry, outputEl.firstChild);
+    }
+
+    // 2. Fetch data list
+    document.getElementById('btn-fetch').addEventListener('click', async () => {
+      try {
+        log('Requesting data lists...');
+        const res = await fetch('/api/data');
+        const result = await res.json();
+        
+        if (result.error) {
+          log(`Error: ${result.error}`, 'database');
+          return;
+        }
+
+        const sourceLabel = result.source.includes('Redis') ? 'cache' : 'database';
+        log(`Fetched ${result.data.length} records from ${result.source}`, sourceLabel);
+        
+        if (result.data.length === 0) {
+          log('No items returned. Try adding one!');
+        } else {
+          result.data.slice(0, 3).forEach(item => {
+            log(`- "${item.title}": ${item.description}`, sourceLabel);
+          });
+        }
+      } catch (err) {
+        log(`API request failed: ${err.message}`);
+      }
+    });
+
+    // 3. Post data
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+
+      try {
+        log(`Submitting new item: "${title}"...`);
+        const res = await fetch('/api/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, description })
+        });
+        const data = await res.json();
+        
+        if (data.error) {
+          log(`Submit failed: ${data.error}`);
+        } else {
+          log(`Successfully inserted item ID ${data.item.id} into database. Cache invalidated!`, 'database');
+          form.reset();
+          loadStatus();
+        }
+      } catch (err) {
+        log(`Submit request failed: ${err.message}`);
+      }
+    });
+
+    // Run status loop
+    loadStatus();
+    setInterval(loadStatus, 10000);
+  </script>
+</body>
+</html>

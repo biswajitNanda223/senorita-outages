@@ -1,0 +1,30 @@
+// Demo Application Deployment Flow
+// Copy this code into https://app.eraser.io
+
+Client_Browser [icon: monitor, label: "Client Browser"]
+
+subgraph Ingress_Layer
+  Load_Balancer [label: "Ingress Router / ALB / AppGw / CloudArmor", icon: key]
+end
+
+subgraph Compute_Layer
+  Demo_App_Container [icon: node, label: "Demo App (Express.js)"]
+end
+
+subgraph Storage_Cache_Layer
+  Redis_Cache [icon: redis, label: "Redis Cache (Standard/ElastiCache/Memorystore)"]
+  PostgreSQL_DB [icon: postgres, label: "PostgreSQL Database (Flexible/RDS/CloudSQL)"]
+end
+
+Identity_Provider [icon: key, label: "SSO Provider (EntraID/Cognito/IdentityPlatform)"]
+
+// Step-by-Step Flow
+Client_Browser -> Load_Balancer: 1. Send HTTP request
+Load_Balancer -> Demo_App_Container: 2. Route internal traffic
+Demo_App_Container -> Identity_Provider: 3. Verify OAuth token
+Demo_App_Container -> Redis_Cache: 4. Check cache hit (GET /api/data)
+Redis_Cache --> Demo_App_Container: 4a. Return cached data (if hits)
+Demo_App_Container -> PostgreSQL_DB: 5. Query data (if cache misses)
+PostgreSQL_DB --> Demo_App_Container: 5a. Return database record
+Demo_App_Container -> Redis_Cache: 6. Cache retrieved data for 60s
+Demo_App_Container --> Client_Browser: 7. Deliver JSON payload to Glassmorphic Client Dashboard

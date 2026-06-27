@@ -1,0 +1,38 @@
+// GCP VPC Architecture
+// Copy this code into https://app.eraser.io
+
+VPC_Network [color: yellow] {
+  Ingress_LoadBalancer [icon: gcp-load-balancing, label: "HTTPS Load Balancer"]
+  Cloud_Armor [icon: key, label: "Cloud Armor WAF"]
+  Cloud_NAT [icon: gcp-cloud-nat, label: "Cloud NAT & Router"]
+  
+  Private_Subnet {
+    GKE_Private_Cluster [icon: gcp-gke, label: "GKE Private Nodes"]
+    Cloud_Run_Private [icon: gcp-cloud-run, label: "Cloud Run Instances"]
+    VPC_Connector [icon: gcp, label: "Serverless VPC Connector"]
+  }
+  
+  Private_Service_Access {
+    Memorystore_Redis [icon: redis, label: "Memorystore Redis"]
+    Cloud_SQL_Postgres [icon: gcp-cloud-sql, label: "Cloud SQL Postgres"]
+  }
+  
+  Google_Private_Access {
+    Artifact_Registry [icon: docker, label: "Artifact Registry"]
+    Secret_Manager [icon: key, label: "Secret Manager"]
+  }
+}
+
+// Connections
+Ingress_LoadBalancer -> Cloud_Armor: Filter Traffic
+Cloud_Armor -> GKE_Private_Cluster: Route GKE
+Cloud_Armor -> Cloud_Run_Private: Route Serverless
+
+Cloud_Run_Private -> VPC_Connector: VNet Egress
+VPC_Connector -> Cloud_SQL_Postgres: Peered Queries
+VPC_Connector -> Memorystore_Redis: Peered Cache
+
+GKE_Private_Cluster -> Artifact_Registry: Pull Images
+GKE_Private_Cluster -> Secret_Manager: Fetch Secrets
+GKE_Private_Cluster -> Cloud_SQL_Postgres: Peered Queries
+GKE_Private_Cluster -> Memorystore_Redis: Peered Cache

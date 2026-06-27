@@ -1,0 +1,19 @@
+{
+  "name": "enterprise-demo-app",
+  "version": "1.0.0",
+  "description": "Demo application for multi-cloud deployment verification using Fastify",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@fastify/static": "^7.0.0",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.26.1",
+    "pg": "^8.11.3",
+    "redis": "^4.6.10"
+  },
+  "author": "Antigravity",
+  "license": "MIT"
+}

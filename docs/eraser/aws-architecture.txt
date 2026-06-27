@@ -1,0 +1,46 @@
+// AWS Multi-AZ Architecture
+// Copy this code into https://app.eraser.io
+
+VPC [color: orange] {
+  Public_Subnets {
+    ALB [icon: aws-alb, label: "Application Load Balancer"]
+    NAT_Gateway [icon: aws-nat-gateway, label: "NAT Gateway"]
+  }
+  
+  Private_Subnets {
+    EKS_Subnet {
+      EKS_Cluster [icon: aws-eks, label: "EKS Cluster"]
+    }
+    ECS_Subnet {
+      ECS_Fargate [icon: aws-ecs, label: "ECS Fargate Tasks"]
+    }
+    Datastores_Subnet {
+      RDS_Postgres [icon: aws-rds, label: "RDS PostgreSQL (Multi-AZ)"]
+      ElastiCache_Redis [icon: redis, label: "ElastiCache Redis"]
+    }
+  }
+  
+  PrivateLink_Endpoints {
+    ECR_Endpoint [icon: aws-ecr, label: "ECR Endpoint"]
+    SecretsManager_Endpoint [icon: aws-secrets-manager, label: "Secrets Manager"]
+    S3_Endpoint [icon: aws-s3, label: "S3 Gateway Endpoint"]
+  }
+}
+
+// Cognito User Pool for SSO Identity
+Cognito [icon: aws-cognito, label: "Cognito User Pool", color: red]
+
+// Connections
+ALB -> EKS_Cluster: Route Ingress
+ALB -> ECS_Fargate: Route Ingress
+EKS_Cluster -> ECR_Endpoint: Private pull
+EKS_Cluster -> SecretsManager_Endpoint: Retrieve Credentials
+EKS_Cluster -> RDS_Postgres: Database Queries
+EKS_Cluster -> ElastiCache_Redis: Cache Operations
+
+ECS_Fargate -> ECR_Endpoint: Private pull
+ECS_Fargate -> SecretsManager_Endpoint: Retrieve Credentials
+ECS_Fargate -> RDS_Postgres: Database Queries
+ECS_Fargate -> S3_Endpoint: Object uploads
+
+EKS_Cluster -> Cognito: Federated Auth (OIDC)

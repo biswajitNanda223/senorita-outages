@@ -1,0 +1,22 @@
+{
+  "name": "enterprise-agent-engine",
+  "version": "1.0.0",
+  "description": "Enterprise AI Agent Engine with session caching, storage bucket persistence, and OpenTelemetry tracing using Fastify",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@google-cloud/opentelemetry-cloud-trace-exporter": "^2.1.0",
+    "@google-cloud/storage": "^7.7.0",
+    "@opentelemetry/api": "^1.7.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.41.1",
+    "@opentelemetry/sdk-node": "^0.47.0",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.26.1",
+    "redis": "^4.6.10"
+  },
+  "author": "Antigravity",
+  "license": "MIT"
+}

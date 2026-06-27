@@ -1,0 +1,34 @@
+// AI Agent Engine Architecture Flow
+// Copy this code into https://app.eraser.io
+
+Client [icon: monitor, label: "Developer Client / UI"]
+
+subgraph Network_Boundary [color: yellow]
+  Load_Balancer [icon: gcp-load-balancing, label: "HTTPS Load Balancer"]
+  Cloud_Armor [icon: key, label: "Cloud Armor WAF"]
+  
+  subgraph VPC_Private_Subnets
+    Agent_Engine [icon: gcp-cloud-run, label: "AI Agent Engine (Cloud Run)"]
+    VPC_Access_Connector [icon: gcp, label: "Serverless VPC Connector"]
+  end
+  
+  subgraph Data_Services
+    Memorystore_Redis [icon: redis, label: "Memorystore Redis (Session Memory)"]
+    Storage_Bucket [icon: gcp-cloud-storage, label: "GCS Bucket (Workspace files)"]
+  end
+end
+
+Google_Cloud_Trace [icon: monitor, label: "Google Cloud Trace API", color: purple]
+
+// Invocation Flows
+Client -> Load_Balancer: POST /api/agent/run
+Load_Balancer -> Cloud_Armor: Inspect request
+Cloud_Armor -> Agent_Engine: Route traffic (within private bounds)
+
+// Tracing Export (OpenTelemetry)
+Agent_Engine -> Google_Cloud_Trace: Export span telemetry (Cloud Trace API)
+
+// Caching and Storage connections
+Agent_Engine -> Memorystore_Redis: Fetch/Update chat history (short-term cache)
+Agent_Engine -> VPC_Access_Connector: Route storage requests
+VPC_Access_Connector -> Storage_Bucket: Save session artifacts & log execution runs

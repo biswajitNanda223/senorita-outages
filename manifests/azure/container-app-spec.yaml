@@ -1,0 +1,40 @@
+# container-app-spec.yaml
+# Azure Container App deployment specification file
+
+location: eastus
+name: app-backend-containerapp
+resourceGroup: rg-enterprise-devops
+type: Microsoft.App/containerApps
+properties:
+  managedEnvironmentId: /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-enterprise-devops/providers/Microsoft.App/managedEnvironments/aca-env-dev
+  configuration:
+    ingress:
+      external: false
+      targetPort: 8080
+      transport: auto
+      allowInsecure: false
+    activeRevisionsMode: Single
+    secrets:
+      - name: redis-connection-string
+        value: "redis-enterprise-cache-dev.privatelink.redis.cache.windows.net:6380,password=SuperSecretPassword,ssl=True,abortConnect=False"
+  template:
+    containers:
+      - image: acrenterprisedevopsdev.azurecr.io/app-backend:latest
+        name: app-backend
+        resources:
+          cpu: 0.5
+          memory: 1.0Gi
+        env:
+          - name: REDIS_URL
+            secretRef: redis-connection-string
+          - name: SPRING_PROFILES_ACTIVE
+            value: prod
+    scale:
+      minReplicas: 0
+      maxReplicas: 5
+      rules:
+        - name: http-scaling-rule
+          custom:
+            type: http
+            metadata:
+              concurrentRequests: "50"

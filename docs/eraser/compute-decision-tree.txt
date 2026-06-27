@@ -1,0 +1,24 @@
+// Compute Decision Flowchart
+// Copy this code into https://app.eraser.io
+
+Start [icon: play, label: "Workload Architectural Requirements"]
+
+Q_Microservices [icon: question, label: "Microservices with complex service mesh?"]
+Q_PaaS [icon: question, label: "Simple monolith Web App (Node/Spring/Python)?"]
+Q_OSAccess [icon: question, label: "Need direct OS/Kernel access or self-hosted agent?"]
+
+AKS_EKS_GKE [icon: kubernetes, label: "Recommended: Managed Kubernetes (AKS / EKS / GKE)", color: green]
+ACA_Fargate_Run [icon: docker, label: "Recommended: Serverless Containers (ACA / ECS Fargate / Cloud Run)", color: cyan]
+AppService_Beanstalk [icon: monitor, label: "Recommended: PaaS (App Service / Beanstalk / App Engine)", color: blue]
+VM_EC2_GCE [icon: linux, label: "Recommended: Virtual Machines (VM / EC2 / Compute Engine)", color: orange]
+
+// Decision Pathways
+Start -> Q_Microservices
+Q_Microservices -> AKS_EKS_GKE: Yes
+Q_Microservices -> Q_PaaS: No
+
+Q_PaaS -> AppService_Beanstalk: Yes
+Q_PaaS -> Q_OSAccess: No
+
+Q_OSAccess -> VM_EC2_GCE: Yes
+Q_OSAccess -> ACA_Fargate_Run: No (Stateless container / APIs)

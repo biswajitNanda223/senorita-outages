@@ -1,0 +1,54 @@
+// Azure Enterprise Architecture
+// Copy this code into https://app.eraser.io
+
+Hub_VNet [color: blue] {
+  App_Gateway [icon: azure-app-gateway, label: "Application Gateway / WAF"]
+  Azure_Firewall [icon: azure-firewall, label: "Azure Firewall"]
+}
+
+Spoke_VNet [color: green] {
+  AKS_Subnet {
+    AKS_Cluster [icon: azure-kubernetes, label: "AKS Cluster"]
+  }
+  ACA_Subnet {
+    Container_Apps [icon: azure-app-service, label: "Container Apps Env"]
+  }
+  AppService_Subnet {
+    App_Service [icon: azure-app-service, label: "Linux App Service"]
+    Azure_Functions [icon: azure-functions, label: "Azure Functions"]
+  }
+  VM_Subnet {
+    GitLab_Runner_VM [icon: linux, label: "GitLab Runner VM"]
+  }
+  Private_Endpoints_Subnet {
+    ACR_Endpoint [icon: azure-container-registry, label: "ACR (Registry)"]
+    Redis_Endpoint [icon: azure-redis, label: "Cache for Redis"]
+    Postgres_Endpoint [icon: azure-sql, label: "Postgres DB"]
+    KeyVault_Endpoint [icon: azure-key-vault, label: "Key Vault"]
+    Blob_Endpoint [icon: azure-blob-storage, label: "Blob Storage"]
+  }
+}
+
+// Log Analytics Workspace
+Log_Analytics [icon: monitor, label: "Log Analytics Workspace", color: purple]
+
+// Flows & Peerings
+App_Gateway -> Azure_Firewall: Route Inbound
+Azure_Firewall -> AKS_Cluster: Route Filtered Inbound
+Azure_Firewall -> Container_Apps: Route Filtered Inbound
+Azure_Firewall -> App_Service: Route Filtered Inbound
+
+AKS_Cluster -> ACR_Endpoint: Pull Images
+AKS_Cluster -> KeyVault_Endpoint: Fetch Secret Keys
+AKS_Cluster -> Postgres_Endpoint: DB Queries
+AKS_Cluster -> Redis_Endpoint: Read/Write Cache
+
+GitLab_Runner_VM -> ACR_Endpoint: Push Images
+GitLab_Runner_VM -> KeyVault_Endpoint: Get Runner Tokens
+GitLab_Runner_VM -> Blob_Endpoint: Store Artifacts
+
+// Diagnostics logs pipeline
+AKS_Cluster -> Log_Analytics: Stream Audits
+KeyVault_Endpoint -> Log_Analytics: Stream AuditEvent
+Postgres_Endpoint -> Log_Analytics: Stream Diagnostic Logs
+GitLab_Runner_VM -> Log_Analytics: VM Logs

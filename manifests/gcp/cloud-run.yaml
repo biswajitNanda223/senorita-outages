@@ -1,0 +1,30 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: cloudrun-app-enterprise
+  namespace: "default"
+  labels:
+    cloud.googleapis.com/location: us-central1
+  annotations:
+    run.googleapis.com/ingress: internal-and-cloud-load-balancing
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/vpc-access-connector: projects/enterprise-devops-project/locations/us-central1/connectors/vpc-connector-dev
+        run.googleapis.com/vpc-access-egress: all-traffic
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: cloudrun-runtime-sa@enterprise-devops-project.iam.gserviceaccount.com
+      containers:
+      - image: us-central1-docker.pkg.dev/enterprise-devops-project/enterprise-registry-dev/app-backend:latest
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod
+        - name: REDIS_HOST
+          value: "10.10.100.4"
