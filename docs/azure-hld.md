@@ -135,4 +135,66 @@ All security and database operations stream logs to Log Analytics Workspace (`la
 *   **Key Vault Access Event logs:** Audits secret retrieval calls (`Get`, `List` operations) for threat analysis.
 *   **Infrastructure Telemetry:** Aggregated metrics for CPU/Memory and database performance parameters.
 
+---
+
+## 💾 5. Virtual Machine / Server Logging & Retention
+
+For virtual machines (like our private self-hosted VM Runner), maintaining system reliability requires a standardized logging and lifecycle strategy.
+
+```mermaid
+graph TD
+    App[Fastify Service App] -->|Stdout / Stderr| Journal[systemd-journald]
+    System[System Events / Auth] -->|Syslog Daemon| Rsyslog[rsyslog /var/log/syslog]
+    Rsyslog -->|Periodic Rotation| Logrotate[logrotate config]
+    Logrotate -->|Compress & Archive| Disk[Disk Storage]
+    Rsyslog & Journal -->|Log Shipper: FluentBit / Promtail| Central[Log Analytics / Loki]
+```
+
+### 1. Log Rotation with `logrotate`
+To prevent the server's disk space from filling up, the `logrotate` utility automatically rotates, compresses, and purges old logs.
+
+#### Configuration Example (`/etc/logrotate.d/fastify-app`):
+```text
+/var/log/fastify/*.log {
+    daily               # Rotate logs once per day
+    rotate 7            # Keep only the last 7 days of logs
+    compress            # Compress rotated logs to save disk space (gz)
+    delaycompress       # Delay compression until the next rotation cycle
+    missingok           # Do not throw error if log file is missing
+    notifempty          # Do not rotate empty logs
+    create 0640 appuser appgroup # Recreate empty log file with correct ownership
+    sharedscripts
+    postrotate
+        # Reload logging daemon or service after rotation
+        systemctl kill -s HUP fastify-app.service
+    endscript
+}
+```
+
+---
+
+## 📊 6. Monitoring with Azure Managed Prometheus & Grafana
+
+Azure provides fully managed cloud-native monitoring for Kubernetes workloads using **Azure Monitor managed service for Prometheus** and **Azure Managed Grafana**.
+
+```mermaid
+graph TD
+    Pod[AKS Application Pods] -->|Exposes /metrics port| PodIP[Pod Endpoints]
+    AMA[Azure Monitor Agent DaemonSet] -->|1. Scrapes metrics periodically| PodIP
+    AMA -->|2. Ingests Workspace Data| AzProm[Azure Prometheus Workspace]
+    Grafana[Azure Managed Grafana] -->|3. Query Metrics via PromQL| AzProm
+    User[Operations Dashboard] -->|4. Visualizes Performance| Grafana
+```
+
+### 1. Azure Monitor Managed Service for Prometheus
+*   **Scraping:** Uses the **Azure Monitor Agent (AMA)** (deployed as a DaemonSet on AKS) to automatically discover and scrape Pod metrics exposed on `/metrics` endpoints.
+*   **Storage:** Stores raw metrics data in an isolated **Azure Monitor Workspace**, supporting Prometheus Query Language (PromQL) queries.
+*   **Alerting:** Uses Prometheus alert rules to trigger Azure Action Groups (PagerDuty, SMS, Webhooks) when CPU or error rates spike.
+
+### 2. Azure Managed Grafana Integration
+*   **Data Source:** Connected directly to the Azure Monitor Workspace.
+*   **IAM Roles:** Users or Managed Identities must be assigned the **Monitoring Reader** and **Grafana Admin** roles in Azure RBAC.
+*   **Dashboards:** Visualizes real-time metrics (like cluster capacity, pod network traffic, CPU/Memory resource constraints, and database connection pools).
+
+
 
