@@ -1,0 +1,66 @@
+{
+  "folders": [
+    {
+      "name": "🎬 Repository Root",
+      "path": "."
+    },
+    {
+      "name": "🦸 Fastify Backend Hero",
+      "path": "demo-app"
+    },
+    {
+      "name": "🤖 AI Agent Engine",
+      "path": "agent-engine"
+    },
+    {
+      "name": "🏗️ Terraform Cloud Stage",
+      "path": "terraform"
+    },
+    {
+      "name": "☸️ Deployment Scriptwriter",
+      "path": "manifests"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true,
+      "**/node_modules": true,
+      "**/.terraform": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.terraform": true,
+      "**/*.tfstate": true,
+      "**/*.tfstate.backup": true
+    },
+    "workbench.colorCustomizations": {
+      "window.activeBorder": "#d9383a",
+      "window.inactiveBorder": "#a6282a",
+      "titleBar.activeBackground": "#1a0809",
+      "titleBar.activeForeground": "#f5c542",
+      "titleBar.inactiveBackground": "#140607",
+      "titleBar.inactiveForeground": "#a68832",
+      "statusBar.background": "#d9383a",
+      "statusBar.foreground": "#ffffff",
+      "activityBar.background": "#1f090a",
+      "activityBar.activeBorder": "#f5c542",
+      "activityBar.foreground": "#f5c542"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "hashicorp.terraform",
+      "ms-azuretools.vscode-docker",
+      "redhat.vscode-yaml",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "gitlab.gitlab-workflow"
+    ]
+  }
+}

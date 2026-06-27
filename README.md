@@ -16,6 +16,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 ├── README.md                           # Master guide, cloud comparisons, and getting started
 ├── gemini.md                           # AI prompt guide & Entra ID token exchange flows
 ├── agent.md                            # Coding standards, security check, and agent rules
+├── senorita-outages.code-workspace     # VS Code Workspace file with Masala theme highlights
 ├── docs/                               # High-Level Design (HLD) files & architecture diagrams
 │   ├── azure-hld.md                    # Azure network spoke routing, Key Vault, VM, and logs
 │   ├── aws-hld.md                      # AWS VPC, multi-AZ, EKS nodes, and Cognito specs

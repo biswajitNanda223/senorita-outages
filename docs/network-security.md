@@ -1,4 +1,8 @@
-# Network Security, Domain Whitelisting, and DNS Architecture
+# 🎬 Network Security, Domain Whitelisting, and DNS Architecture
+## *MasalaOps Presents: "The Border Patrol Force!"*
+
+> [!NOTE]
+> **Director's Note:** In this suspenseful thriller, our Egress Firewall and domain whitelists act as the elite border patrol. Any outgoing request trying to escape with secrets is immediately stopped, interrogated, and shot down unless it has a verified VIP pass!
 
 This document describes the networking, security, firewall rules, domain egress filtering, and DNS mapping strategies across our multi-cloud deployment environments.
 

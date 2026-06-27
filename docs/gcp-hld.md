@@ -1,4 +1,8 @@
-# High-Level Design: Google Cloud Platform (GCP) Infrastructure
+# 🎬 High-Level Design: Google Cloud Platform (GCP) Infrastructure
+## *MasalaOps Presents: "The Serverless Romance!"*
+
+> [!NOTE]
+> **Director's Note:** In this romantic saga, our Serverless Cloud Run services are bridged to GKE clusters and Cloud SQL databases using Serverless VPC Connectors. An elegant, fast-paced drama featuring OpenTelemetry tracing (The Camera) recording every heartbeat!
 
 This document outlines the architecture, networking, security policies, and application hosting strategy for the GCP deployment.
 

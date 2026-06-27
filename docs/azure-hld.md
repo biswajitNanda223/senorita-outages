@@ -1,4 +1,8 @@
-# High-Level Design: Microsoft Azure Infrastructure
+# 🎬 High-Level Design: Microsoft Azure Enterprise Infrastructure
+## *MasalaOps Presents: "The Hub-Spoke Action Thriller!"*
+
+> [!NOTE]
+> **Director's Note:** In this high-security blockbuster, the Azure Hub-Spoke VNet acts as our impenetrable fortress. Our Kubernetes nodes (The Heroes) are hidden deep inside private subnets, protected by Azure Firewall (The Border Security Force) from rogue internet hackers (The Villains).
 
 This document outlines the architecture, networking, security policies, and application hosting strategy for the Microsoft Azure deployment.
 

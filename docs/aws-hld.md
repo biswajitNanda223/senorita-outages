@@ -1,4 +1,8 @@
-# High-Level Design: Amazon Web Services (AWS) Infrastructure
+# 🎬 High-Level Design: Amazon Web Services (AWS) Infrastructure
+## *MasalaOps Presents: "The Multi-AZ Survival Adventure!"*
+
+> [!NOTE]
+> **Director's Note:** In this action-packed thriller, our compute nodes (EKS & ECS Fargate) are replicated across multiple Availability Zones. If a meteor (or a rogue script) strikes Zone A, the show goes on in Zone B and C without missing a single beat!
 
 This document outlines the architecture, networking, security policies, and application hosting strategy for the AWS deployment.
 
