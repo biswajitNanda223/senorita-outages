@@ -173,6 +173,68 @@ The following diagram details how an HTTPS client request maps into the isolated
 
 ---
 
+## 🌐 Multi-Cloud Networking Concepts for DevOps
+
+To manage enterprise infrastructure, DevOps engineers must understand how virtual private networks are structured. Here is a breakdown of the core networking blocks used across our deployments.
+
+### 1. Subnetting & CIDR Design (Non-Overlapping Blocks)
+When peering VNets/VPCs together or connecting them to an on-premises network, their IP address ranges **must not overlap**. Overlapping ranges cause IP collisions and routing failures.
+
+#### CIDR Allocation Blueprint:
+*   **AWS VPC Address Space:** `10.0.0.0/16` (65,536 total IPs)
+    *   *Public Subnet AZ-A:* `10.0.1.0/24` (256 IPs - hosts NAT Gateways and ALBs)
+    *   *Private Subnet AZ-A:* `10.0.10.0/24` (256 IPs - hosts private EKS pods)
+*   **Azure VNet Address Space:** `10.10.0.0/16`
+    *   *Ingress Subnet:* `10.10.1.0/24` (hosts Application Gateway)
+    *   *AKS Subnet:* `10.10.10.0/20` (4,096 IPs - large block to avoid running out of pod IPs)
+*   **GCP VPC Address Space (Global):**
+    *   *US-East Subnet:* `10.20.1.0/24`
+    *   *Europe-West Subnet:* `10.20.2.0/24`
+
+#### Terraform Subnet Configuration Example:
+```terraform
+# Declaring a secure private subnet block in Terraform
+resource "aws_subnet" "private_subnet_a" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.10.0/24"
+  availability_zone = "us-east-1a"
+  tags = {
+    Name = "private-subnet-app-a"
+    Tier = "Private"
+  }
+}
+```
+
+### 2. Ingress & Egress Ingress Perimeter (Akamai + F5 + Load Balancer)
+Traffic flows follow strict entry and exit criteria to protect backend database layers:
+
+```mermaid
+graph TD
+    Client[Client Requests] -->|HTTPS| Akamai[Akamai Edge WAF & CDN]
+    Akamai -->|Scrubbed Transit| F5[F5 BIG-IP Ingress]
+    F5 -->|SSL Decrypted| CloudLB[Cloud Load Balancer: ALB/AppGateway]
+    CloudLB -->|Private Subnet Ingress| Pods[Fastify App Pods]
+    Pods -->|0.0.0.0/0 Outbound Route| Firewall[Central Cloud Firewall]
+    Firewall -->|DNS Whitelist Check| NAT[NAT Gateway / Cloud NAT]
+    NAT -->|Egress IP| Internet[External APIs]
+```
+
+*   **Ingress (Incoming Traffic):** Client -> Akamai Edge -> F5 Ingress -> Cloud Load Balancer (ALB) -> Private Compute Nodes (AKS/EKS/GKE).
+*   **Egress (Outgoing Traffic):** Private Compute -> Route Table (`0.0.0.0/0`) -> Central Cloud Firewall (Azure Firewall/AWS Network Firewall) -> NAT Gateway -> Internet.
+
+### 3. Load Balancers: Layer 7 (ALB) vs. Layer 4 (NLB)
+*   **Application Load Balancers (ALB - Layer 7):** Content-aware. Routes HTTP/HTTPS requests based on host headers (e.g. `api.domain.com`), URL paths (e.g. `/health`), or cookies.
+*   **Network Load Balancers (NLB - Layer 4):** Direct connection routing. Routes TCP/UDP packets at the transport layer, providing ultra-low latency and static IP addresses.
+
+### 4. Firewalls: Stateful (Security Groups) vs. Stateless (NACLs)
+*   **Security Groups / NSGs (Stateful):** Control traffic at the instance or network interface (NIC) boundary. If you allow inbound traffic on port 80, return traffic is dynamically allowed.
+*   **NACLs (Stateless):** Control traffic at the subnet boundary. You must explicitly create both inbound and outbound rules to allow communication.
+
+### 5. Private Links & DNS Resolution
+We bypass the public internet to reach managed databases and Key Vaults using **Private Service Connect (GCP)** or **Private Endpoints (Azure/AWS)**. Private DNS zones ensure that when our app queries `postgres.database.azure.com`, it resolves to a private IP (e.g., `10.10.2.14`) instead of a public IP.
+
+---
+
 ## 🚀 Getting Started
 
 1.  **Infrastructure Provisioning:**
