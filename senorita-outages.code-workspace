@@ -1,23 +1,23 @@
 {
   "folders": [
     {
-      "name": "🎬 Repository Root",
+      "name": "[Monorepo Root]",
       "path": "."
     },
     {
-      "name": "🦸 Fastify Backend Hero",
+      "name": "[Service] fastify-backend",
       "path": "demo-app"
     },
     {
-      "name": "🤖 AI Agent Engine",
+      "name": "[Service] agent-engine",
       "path": "agent-engine"
     },
     {
-      "name": "🏗️ Terraform Cloud Stage",
+      "name": "[IaC] terraform-provisioning",
       "path": "terraform"
     },
     {
-      "name": "☸️ Deployment Scriptwriter",
+      "name": "[Manifests] kubernetes-specifications",
       "path": "manifests"
     }
   ],
@@ -39,6 +39,12 @@
       "**/*.tfstate": true,
       "**/*.tfstate.backup": true
     },
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": true,
+    "editor.trimAutoWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": "active",
     "editor.minimap.enabled": true,
@@ -51,9 +57,9 @@
       {
         "type": "node",
         "request": "launch",
-        "name": "🦸 Debug Fastify Backend Hero",
+        "name": "Debug Fastify Backend",
         "skipFiles": ["<node_internals>/**"],
-        "program": "${workspaceFolder:🦸 Fastify Backend Hero}/server.js",
+        "program": "${workspaceFolder:[Service] fastify-backend}/server.js",
         "env": {
           "NODE_ENV": "development",
           "PORT": "8080",
@@ -64,9 +70,9 @@
       {
         "type": "node",
         "request": "launch",
-        "name": "🤖 Debug AI Agent Engine",
+        "name": "Debug AI Agent Engine",
         "skipFiles": ["<node_internals>/**"],
-        "program": "${workspaceFolder:🤖 AI Agent Engine}/server.js",
+        "program": "${workspaceFolder:[Service] agent-engine}/server.js",
         "env": {
           "NODE_ENV": "development",
           "PORT": "9000",
@@ -81,11 +87,11 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "label": "🎭 Action! Start Local Dev Server",
+        "label": "Start Fastify Backend Server",
         "type": "shell",
         "command": "npm run dev",
         "options": {
-          "cwd": "${workspaceFolder:🦸 Fastify Backend Hero}"
+          "cwd": "${workspaceFolder:[Service] fastify-backend}"
         },
         "group": "build",
         "presentation": {
@@ -94,11 +100,11 @@
         }
       },
       {
-        "label": "🤖 Brainstorm! Start Agent Engine",
+        "label": "Start AI Agent Engine",
         "type": "shell",
         "command": "npm start",
         "options": {
-          "cwd": "${workspaceFolder:🤖 AI Agent Engine}"
+          "cwd": "${workspaceFolder:[Service] agent-engine}"
         },
         "group": "build",
         "presentation": {
@@ -107,11 +113,11 @@
         }
       },
       {
-        "label": "🛡️ Interrogate! Run Pre-Commit Hook",
+        "label": "Run Pre-Commit Verification",
         "type": "shell",
         "command": "bash ./cicd/scripts/pre-commit.sh",
         "options": {
-          "cwd": "${workspaceFolder:🎬 Repository Root}"
+          "cwd": "${workspaceFolder:[Monorepo Root]}"
         },
         "group": "test",
         "presentation": {
@@ -120,11 +126,11 @@
         }
       },
       {
-        "label": "🏗️ Direct! Terraform Validate",
+        "label": "Terraform Validate",
         "type": "shell",
         "command": "terraform validate",
         "options": {
-          "cwd": "${workspaceFolder:🏗️ Terraform Cloud Stage}/azure"
+          "cwd": "${workspaceFolder:[IaC] terraform-provisioning}/azure"
         },
         "group": "test",
         "presentation": {
