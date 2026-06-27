@@ -1,0 +1,35 @@
+// GCP Observability Logging and Prometheus Metrics Pipeline Flow
+// Copy this code into https://app.eraser.io
+
+Container_Pods [icon: gcp-cloud-run, label: "Application Pods (Fastify Backend)"]
+
+subgraph Metrics_Pipeline [color: green]
+  Prom_Exporter [icon: monitor, label: "Prometheus Metrics Exporter (/metrics)"]
+  GKE_Prom_Collector [icon: gcp, label: "GKE Managed Prometheus Collectors"]
+  Monarch_Database [icon: database, label: "Google Monarch Planet-Scale Time-Series Store (GMP)"]
+end
+
+subgraph Logs_Pipeline [color: blue]
+  Stdout_Stderr [icon: monitor, label: "Console stdout/stderr logs"]
+  Google_Logging_Agent [icon: key, label: "Google logging-agent (Fluentd-based)"]
+  Cloud_Logging [icon: database, label: "Google Cloud Logging Buckets"]
+end
+
+subgraph Visualizations [color: yellow]
+  Grafana_Workspaces [icon: monitor, label: "Grafana Workspaces (Integrated Dashboards)"]
+end
+
+// Metrics ingestion flow
+Container_Pods -> Prom_Exporter: Expose performance data
+GKE_Prom_Collector -> Prom_Exporter: Scrape /metrics periodically
+GKE_Prom_Collector -> Monarch_Database: Write metrics via Monarch API
+
+// Logs ingestion flow
+Container_Pods -> Stdout_Stderr: Emit console logs
+Google_Logging_Agent -> Stdout_Stderr: Capture standard out/err sockets
+Google_Logging_Agent -> Cloud_Logging: Stream compressed log events
+
+// Dashboard visualization flow
+Grafana_Workspaces -> Monarch_Database: Query metrics via GMP PromQL proxy
+Grafana_Workspaces -> Cloud_Logging: Query log events via Cloud Logging APIs
+Grafana_Workspaces -> Operations_Team: Display visual system metrics

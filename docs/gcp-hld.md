@@ -86,3 +86,56 @@ Here is how our containerized demo application (Node.js/Express) runs and commun
 4. **Data Cache:** Connects to Memorystore Redis via Private Service Access.
 5. **Data Storage:** Reads/Writes items to Cloud SQL PostgreSQL instance over private IP peering.
 
+---
+
+## 💾 5. Google Cloud Logging & Retention Rules
+
+All stdout/stderr text outputs emitted by GKE nodes and serverless Cloud Run containers are automatically ingested into **Google Cloud Logging** (formerly Stackdriver) without installing manual sidecar daemons.
+
+```mermaid
+graph TD
+    App[GKE Pods / Cloud Run] -->|Automatic Ingest| Fluentd[Google logging-agent]
+    Fluentd -->|1. Store Events| LogBucket[Cloud Logging Buckets]
+    LogBucket -->|2. Archive Lifecycle| GCS[Google Cloud Storage Coldline]
+    LogBucket -->|3. Real-Time Streaming| PubSub[Pub/Sub to BigQuery SIEM]
+```
+
+### 1. Zero-Config Logging
+*   GCP has built-in integration between GKE/Cloud Run and Cloud Logging. System daemons capture console output and stream it to the Logging APIs automatically.
+
+### 2. Log Retention and Exclusion
+By default, GCP retains logs for 30 days in its default bucket. To save costs, we exclude noise (like high-volume router logs) and set retention policies in Terraform:
+```terraform
+resource "google_logging_project_bucket_config" "default" {
+  project        = "enterprise-devops-project"
+  location       = "global"
+  bucket_id      = "_Default"
+  retention_days = 30 # Retain standard audits for 30 days
+}
+```
+
+---
+
+## 📊 6. Monitoring with Google Cloud Managed Service for Prometheus (GMP)
+
+Google Cloud offers **Google Cloud Managed Service for Prometheus (GMP)** as a fully managed metrics ingestion pipeline.
+
+![GCP Observability Logging & Metrics Pipeline](images/gcp_observability_pipeline.png)
+
+```mermaid
+graph TD
+    Pod[GKE Application Pods] -->|Exposes /metrics| Endpoint[Pod IP Metrics]
+    Collector[GKE Managed Prometheus Collectors] -->|1. Scrape metrics periodically| Endpoint
+    Collector -->|2. Ingest via Monarch API| GMP[Google Monarch Time-Series Store]
+    Grafana[Grafana Workspaces] -->|3. Query Metrics via PromQL| GMP
+    User[Operations Team] -->|4. Visualizes Metrics| Grafana
+```
+
+### 1. Google Cloud Managed Service for Prometheus (GMP)
+*   **Scraping:** GMP uses GKE's managed collection system (managed by Google-installed operators). You do not need to install or maintain Prometheus server pods manually.
+*   **Monarch Engine:** Under the hood, GMP writes metrics data directly into **Monarch**, Google's global planet-scale time-series database.
+
+### 2. Visualization via Cloud Monitoring or Grafana
+*   **GMP Query Proxy:** A lightweight query proxy allows external Grafana instances to query Monarch metrics using standard PromQL (Prometheus Query Language) securely via IAM Service Account credentials.
+
+

@@ -90,3 +90,55 @@ Here is how our containerized demo application (Node.js/Express) runs and commun
 4. **Data Cache:** Connects to Amazon ElastiCache Redis replication group via private VPC endpoints.
 5. **Data Storage:** Reads/Writes items to Amazon RDS PostgreSQL multi-AZ instance.
 
+---
+
+## 💾 5. Amazon CloudWatch Logs & Retention Policies
+
+System logs from EC2 nodes and stdout/stderr logs from EKS container workloads are shipped directly to **Amazon CloudWatch Logs** to ensure central audit compliance.
+
+```mermaid
+graph TD
+    App[Fastify App Pods] -->|Stdout Container Logs| FB[Fluent Bit DaemonSet]
+    FB -->|1. Ingest Log Streams| CW[Amazon CloudWatch Log Groups]
+    CW -->|2. Lifecycle Rule| S3[Glacier Archival Storage]
+    CW -->|3. Threat Auditing| GuardDuty[Amazon GuardDuty / SIEM]
+```
+
+### 1. Log Shipping with Fluent Bit
+*   **DaemonSet Deployment:** Fluent Bit runs on EKS worker nodes, reads log sockets at `/var/log/containers/*`, decorates them with Kubernetes metadata, and sends them to CloudWatch Logs APIs.
+
+### 2. Cost-Optimized Log Retention
+By default, CloudWatch Log Groups store logs indefinitely, leading to massive storage costs. We enforce retention limits in Terraform:
+```terraform
+resource "aws_cloudwatch_log_group" "app_logs" {
+  name              = "/aws/eks/enterprise-cluster/app-backend"
+  retention_in_days = 30 # Automatically purges logs older than 30 days
+}
+```
+
+---
+
+## 📊 6. Monitoring with Amazon Managed Prometheus (AMP) & Grafana (AMG)
+
+For high-scale container monitoring, AWS provides managed integrations for Prometheus and Grafana.
+
+![AWS Observability Logging & Metrics Pipeline](images/aws_observability_pipeline.png)
+
+```mermaid
+graph TD
+    Pod[EKS Application Pods] -->|Exposes /metrics| Endpoint[Pod IP Metrics]
+    ADOT[AWS Distro for OpenTelemetry] -->|1. Scrapes metrics periodically| Endpoint
+    ADOT -->|2. Ingests data using IAM SigV4| AMP[Amazon Managed Prometheus Workspace]
+    AMG[Amazon Managed Grafana] -->|3. Query Metrics via PromQL| AMP
+    User[Operations Team] -->|4. Monitors Dashboards| AMG
+```
+
+### 1. Amazon Managed Service for Prometheus (AMP)
+*   **Ingestion:** The **AWS Distro for OpenTelemetry (ADOT)** collector runs in the EKS cluster, scrapes Prometheus metrics from pods, and pushes them to AMP using **AWS Signature Version 4 (SigV4)** signing for secure identity checks.
+*   **Scale:** AMP automatically scales querying and storage boundaries as cluster pods expand.
+
+### 2. Amazon Managed Grafana (AMG)
+*   **Identity Sync:** AMG integrates with **AWS IAM Identity Center** (formerly SSO) to manage administrator and viewer logins.
+*   **Secret Connection:** AMG uses IAM role assumption to read metrics from AMP workspaces privately without any static passwords.
+
+

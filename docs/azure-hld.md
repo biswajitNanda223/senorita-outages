@@ -177,6 +177,8 @@ To prevent the server's disk space from filling up, the `logrotate` utility auto
 
 Azure provides fully managed cloud-native monitoring for Kubernetes workloads using **Azure Monitor managed service for Prometheus** and **Azure Managed Grafana**.
 
+![Azure Observability Logging & Metrics Pipeline](images/azure_observability_pipeline.png)
+
 ```mermaid
 graph TD
     Pod[AKS Application Pods] -->|Exposes /metrics port| PodIP[Pod Endpoints]

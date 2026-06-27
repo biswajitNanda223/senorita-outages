@@ -1,0 +1,35 @@
+// Azure Observability Logging and Prometheus Metrics Pipeline Flow
+// Copy this code into https://app.eraser.io
+
+Container_Pods [icon: gcp-cloud-run, label: "Application Pods (Fastify Backend)"]
+
+subgraph Metrics_Pipeline [color: green]
+  Prom_Exporter [icon: monitor, label: "Prometheus Metrics Exporter (/metrics)"]
+  Azure_Monitor_Agent [icon: gcp, label: "Azure Monitor Agent (AMA DaemonSet)"]
+  Prometheus_Workspace [icon: database, label: "Azure Monitor Workspace (Managed Prometheus)"]
+end
+
+subgraph Logs_Pipeline [color: blue]
+  Stdout_Stderr [icon: monitor, label: "Console stdout/stderr logs"]
+  Fluent_Bit [icon: key, label: "Fluent Bit (Log Shipper)"]
+  Log_Analytics [icon: database, label: "Log Analytics Workspace (Centralized Auditing)"]
+end
+
+subgraph Visualizations [color: yellow]
+  Managed_Grafana [icon: monitor, label: "Azure Managed Grafana Dashboards"]
+end
+
+// Metrics ingestion flow
+Container_Pods -> Prom_Exporter: Expose performance data
+Azure_Monitor_Agent -> Prom_Exporter: Scrape /metrics periodically
+Azure_Monitor_Agent -> Prometheus_Workspace: Ingest raw time-series metrics
+
+// Logs ingestion flow
+Container_Pods -> Stdout_Stderr: Emit json log strings
+Fluent_Bit -> Stdout_Stderr: Read container log sockets
+Fluent_Bit -> Log_Analytics: Ship compressed audit log entries
+
+// Dashboard visualization flow
+Managed_Grafana -> Prometheus_Workspace: Query metrics via PromQL
+Managed_Grafana -> Log_Analytics: Query text events via KQL
+Managed_Grafana -> Operations_Team: Display visual system metrics

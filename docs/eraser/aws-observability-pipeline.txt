@@ -1,0 +1,35 @@
+// AWS Observability Logging and Prometheus Metrics Pipeline Flow
+// Copy this code into https://app.eraser.io
+
+Container_Pods [icon: gcp-cloud-run, label: "Application Pods (Fastify Backend)"]
+
+subgraph Metrics_Pipeline [color: green]
+  Prom_Exporter [icon: monitor, label: "Prometheus Metrics Exporter (/metrics)"]
+  ADOT_Collector [icon: gcp, label: "AWS Distro for OpenTelemetry (ADOT)"]
+  Managed_Prometheus [icon: database, label: "Amazon Managed Service for Prometheus (AMP)"]
+end
+
+subgraph Logs_Pipeline [color: blue]
+  Stdout_Stderr [icon: monitor, label: "Console stdout/stderr logs"]
+  Fluent_Bit [icon: key, label: "Fluent Bit (Log Shipper)"]
+  CloudWatch_Logs [icon: database, label: "Amazon CloudWatch Log Groups"]
+end
+
+subgraph Visualizations [color: yellow]
+  Managed_Grafana [icon: monitor, label: "Amazon Managed Grafana (AMG)"]
+end
+
+// Metrics ingestion flow
+Container_Pods -> Prom_Exporter: Expose performance data
+ADOT_Collector -> Prom_Exporter: Scrape /metrics periodically
+ADOT_Collector -> Managed_Prometheus: Ingest metrics using AWS SigV4
+
+// Logs ingestion flow
+Container_Pods -> Stdout_Stderr: Emit json log strings
+Fluent_Bit -> Stdout_Stderr: Read container log sockets
+Fluent_Bit -> CloudWatch_Logs: Ship compressed log streams
+
+// Dashboard visualization flow
+Managed_Grafana -> Managed_Prometheus: Query metrics via PromQL
+Managed_Grafana -> CloudWatch_Logs: Query text events via CloudWatch APIs
+Managed_Grafana -> Operations_Team: Display visual system metrics
