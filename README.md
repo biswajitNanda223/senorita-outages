@@ -1,6 +1,8 @@
-# Multi-Cloud DevOps & DevSecOps Monorepo
+![Senorita Outages Banner](docs/images/repo_banner.png)
 
-Welcome to the Multi-Cloud DevOps Monorepo. This repository provides an end-to-end blueprint and infrastructure-as-code (IaC) templates, CI/CD pipelines, and Kubernetes deployment manifests for provisioning and deploying secure, production-grade applications on **Microsoft Azure**, **Amazon Web Services (AWS)**, and **Google Cloud Platform (GCP)**.
+# 💃 Senorita Outages: Multi-Cloud DevOps Monorepo
+
+Welcome to **Senorita Outages**, the ultimate end-to-end multi-cloud DevOps, DevSecOps, and AI Agent deployment monorepo. This repository contains complete infrastructure blueprints (Terraform), CI/CD pipelines (GitLab), containerized application engines (Fastify), and deployment manifests for **Microsoft Azure**, **AWS**, and **GCP**.
 
 > [!NOTE]
 > This repository is structured as a monorepo, separating infrastructure, CI/CD logic, and deployment manifests by cloud provider. It implements rigorous network isolation, DNS mapping, SSO configurations, and a secure build-push-sync container registry pipeline.
@@ -11,53 +13,64 @@ Welcome to the Multi-Cloud DevOps Monorepo. This repository provides an end-to-e
 
 ```text
 .
-├── README.md                           # Main documentation & multi-cloud comparative guide
-├── docs/                               # High-Level Design (HLD) files & architecture diagrams
-│   ├── azure-hld.md                    # Azure Design: AKS, Container Apps, Functions, ACR, VNet, SSO, VM
-│   ├── aws-hld.md                      # AWS Design: EKS, ECS Fargate, ECR, Route 53, Cognito
-│   ├── gcp-hld.md                      # GCP Design: GKE, Cloud Run, Memorystore, Cloud SQL, Cloud DNS
-│   ├── network-security.md             # Firewall configs, domain whitelisting, private link, DNS maps
-│   ├── compute-decision-matrix.md      # Compute Decision Guide: "When to use what"
-│   ├── masala-ops.md                   # MasalaOps: Cinematic Cloud learning guide
-│   ├── eraser/                         # Eraser.io Diagram-as-Code files (DSL files)
-│   │   ├── azure-architecture.txt
-│   │   ├── aws-architecture.txt
-│   │   ├── gcp-architecture.txt
-│   │   ├── demo-deployment-flow.txt
-│   │   └── compute-decision-tree.txt
-│   └── images/                         # Generated architecture visualizations
-│       ├── azure_architecture.png
-│       ├── aws_architecture.png
-│       └── gcp_architecture.png
-├── terraform/                          # Infrastructure as Code (IaC) by provider
-│   ├── azure/                          # VNet, AKS, Container Apps, Functions, Redis, ACR, Postgres, App Reg
-│   ├── aws/                            # VPC, EKS, ECS, ECR, ElastiCache, RDS, IAM
-│   └── gcp/                            # VPC, GKE, Cloud Run, Artifact Registry, Memorystore, Cloud SQL
-├── cicd/                               # CI/CD orchestration
+├── README.md                           # Master guide, cloud comparisons, and getting started
+├── gemini.md                           # AI prompt guide & Entra ID token exchange flows
+├── agent.md                            # Coding standards, security check, and agent rules
+├── docs/                               # Architecture HLDs & Decisions
+│   ├── azure-hld.md                    # Azure network spoke routing, Key Vault, VM, and logs
+│   ├── aws-hld.md                      # AWS VPC, multi-AZ, EKS nodes, and Cognito specs
+│   ├── gcp-hld.md                      # GCP private subnets, PSC db links, and Identity platform
+│   ├── network-security.md             # Egress domain whitelists, firewalls, and Private DNS
+│   ├── compute-decision-matrix.md      # Matrix comparison: "When to use what compute"
+│   ├── masala-ops.md                   # MasalaOps: Dramatic cinematic Cloud learning guide
+│   ├── images/                         # Generated high-resolution blueprints
+│   │   ├── repo_banner.png             # Repository horizontal banner
+│   │   ├── azure_architecture.png      # Azure network architecture
+│   │   ├── azure_vm_runner_flow.png    # Azure VM Runner flow
+│   │   ├── aws_architecture.png        # AWS VPC architecture
+│   │   ├── gcp_architecture.png        # GCP VPC architecture
+│   │   ├── demo_deployment_flow.png    # Container application flow
+│   │   └── compute_decision_tree.png   # Compute decision flowchart
+│   └── eraser/                         # Eraser.io Diagram-as-Code DSL text files
+│       ├── azure-architecture.txt
+│       ├── aws-architecture.txt
+│       ├── gcp-architecture.txt
+│       ├── demo-deployment-flow.txt
+│       ├── compute-decision-tree.txt
+│       └── agent-engine-flow.txt
+├── terraform/                          # Infrastructure provisioning (IaC)
+│   ├── azure/                          # VNet, VM Runner, AKS, ACR, Log Analytics, KV, Blob (main.tf, outputs.tf)
+│   ├── aws/                            # VPC, EKS, ECS, Cognito, RDS Postgres, ElastiCache Redis
+│   └── gcp/                            # VPC, GKE, Cloud Run, Cloud SQL, Memorystore Redis, Cloud Trace APIs
+├── cicd/                               # Pipelines and sync logic
 │   ├── gitlab-ci/
-│   │   ├── templates/                  # Reusable pipeline steps (linter, build-sync, deploy)
-│   │   └── .gitlab-ci.yml              # GitLab main pipeline file
+│   │   ├── templates/                  # Reusable build, test, and deploy steps
+│   │   │   ├── build-push-sync.yml     # Trivy container scans & registry mirroring
+│   │   │   ├── tf-lifecycle.yml        # IaC validate, plan, and manual applies
+│   │   │   └── k8s-deploy.yml          # Kube-linter & kubectl apply
+│   │   └── .gitlab-ci.yml              # Root pipelines coordinating the build flows
 │   └── scripts/
-│       └── sync-registry.sh            # Container Registry sync helper script
-├── manifests/                          # Deployment manifests (Kubernetes, Helm, Cloud specs)
-│   ├── azure/                          # AKS ingress, deployment YAMLs, Container App specs
-│   ├── aws/                            # EKS Helm charts, ECS task definitions
-│   └── gcp/                            # GKE YAML manifests, Cloud Run Service definitions
-├── demo-app/                           # Node.js + PostgreSQL + Redis Demo Application
-│   ├── public/                         # Beautiful glassmorphic dashboard
-│   │   └── index.html                  # Live status client page
-│   ├── server.js                       # Express connection handlers (caching, endpoints)
-│   ├── package.json                    # Application metadata and scripts
-│   └── Dockerfile                      # Production-grade multi-stage runner spec
-├── gemini.md                           # AI prompt guide and DevSecOps learning resource
-└── agent.md                            # Rules and instructions for local agents / automation tools
+│       └── sync-registry.sh            # Safe container mirroring script using skopeo/docker
+├── manifests/                          # Runtime deployment specs
+│   ├── azure/                          # Ingress definitions & ACA YAML templates
+│   ├── aws/                            # EKS deployment YAMLs & ECS task JSONs
+│   └── gcp/                            # GKE service routing & Cloud Run service YAMLs
+├── demo-app/                           # Multi-cloud Node.js + Fastify demo project
+│   ├── package.json
+│   ├── server.js                       # Connects to PG DB + Redis caching, serves APIs
+│   ├── Dockerfile                      # Production multi-stage non-root build
+│   └── public/
+│       └── index.html                  # Responsive glassmorphic dashboard UI
+└── agent-engine/                       # AI Agent Engine (Fastify + OpenTelemetry)
+    ├── package.json
+    ├── server.js                       # Telemetry tracing spans, Redis context, GCS bucket
+    ├── Dockerfile                      # Production multi-stage runner
+    └── README.md                       # Tracing setup and env parameters
 ```
 
 ---
 
 ## ☁️ Multi-Cloud Feature Comparison Matrix
-
-The table below illustrates how common service patterns map across our three supported cloud platforms:
 
 | Architectural Component | Microsoft Azure | Amazon Web Services (AWS) | Google Cloud Platform (GCP) |
 | :--- | :--- | :--- | :--- |
@@ -89,11 +102,6 @@ graph TD
     G -->|5. Private Network Pull| H[Compute Resources<br>AKS / EKS / GKE]
 ```
 
-### Key Advantages:
-1.  **Uniform Build & Scan Policy:** All images undergo vulnerabilities scanning (via Trivy) and linting in one unified GitLab runner stage.
-2.  **Minimized Credentials Footprint:** Cloud credentials are only needed by the Sync job (or via OIDC) and are never exposed during the compilation or build processes.
-3.  **Local Network Pulls:** AKS/EKS/GKE pull images from their local cloud registries via private endpoints, saving egress bandwidth cost and improving startup times.
-
 ---
 
 ## 🚀 Getting Started
@@ -105,25 +113,32 @@ graph TD
     *   Run: `terraform apply`
 2.  **Configure GitLab CI/CD:**
     *   Commit this repo to GitLab.
-    *   Configure GitLab variables for Cloud authentication (OIDC preferred). See details in `cicd/gitlab-ci/README.md`.
+    *   Configure GitLab variables for Cloud OIDC authentication. See details in `cicd/gitlab-ci/templates/`.
 3.  **Deployment manifests:**
     *   Apply Kubernetes manifests: e.g. `kubectl apply -f manifests/azure/`
 
 ---
 
-## 📦 Demo Application Execution
-The monorepo contains a sample application under `/demo-app` verifying private cache and database configurations.
+## 📦 App Deployments & Local Testing
 
-### Running Locally
-To test the demo app locally:
-1. Ensure you have Docker Compose or local instances of Postgres and Redis running.
-2. In `demo-app/` create a `.env` file:
-   ```text
-   DATABASE_URL=postgresql://dbadmin:SuperSecretPassword123!@localhost:5432/postgres
-   REDIS_URL=redis://127.0.0.1:6379
-   CLOUD_PROVIDER=azure
-   ENVIRONMENT=dev
-   ```
-3. Run `npm install` and `npm start`.
-4. Open `http://localhost:8080` to see the live portal.
+### 1. Demo Application (Fastify + PG + Redis Cache)
+*   Located under `/demo-app`.
+*   Includes a beautiful glassmorphic client interface showing connection states.
+*   Run locally:
+    ```bash
+    cd demo-app
+    # Create .env with DATABASE_URL and REDIS_URL
+    npm install
+    npm start
+    ```
 
+### 2. AI Agent Engine (Fastify + OpenTelemetry + Cloud Trace + GCS Bucket)
+*   Located under `/agent-engine`.
+*   Uses OpenTelemetry tracing SDK to monitor agent executions and logs workspaces to a secure Cloud Storage bucket.
+*   Run locally:
+    ```bash
+    cd agent-engine
+    # Set ENABLE_TRACING=true, REDIS_HOST, and AGENT_WORKSPACE_BUCKET
+    npm install
+    npm start
+    ```
