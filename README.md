@@ -16,7 +16,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 ├── README.md                           # Master guide, cloud comparisons, and getting started
 ├── gemini.md                           # AI prompt guide & Entra ID token exchange flows
 ├── agent.md                            # Coding standards, security check, and agent rules
-├── docs/                               # Architecture HLDs & Decisions
+├── docs/                               # High-Level Design (HLD) files & architecture diagrams
 │   ├── azure-hld.md                    # Azure network spoke routing, Key Vault, VM, and logs
 │   ├── aws-hld.md                      # AWS VPC, multi-AZ, EKS nodes, and Cognito specs
 │   ├── gcp-hld.md                      # GCP private subnets, PSC db links, and Identity platform
@@ -24,15 +24,19 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── compute-decision-matrix.md      # Matrix comparison: "When to use what compute"
 │   ├── masala-ops.md                   # MasalaOps: Dramatic cinematic Cloud learning guide
 │   ├── vpc-guide.md                    # VPC Mapping Guide: AWS vs Azure vs GCP networking
+│   ├── vpc-and-firewalls.md            # HLD: VPC isolation rationale, ALB vs NLB, Cloud Firewalls
+│   ├── secrets-management.md           # HLD: Key Vault / Secrets Manager with Managed Identity SDK
+│   ├── gitlab-workers-and-environments.md # HLD: GitLab runners, manual gates, multi-environment states
+│   ├── agent-adk-memory-banks.md       # HLD: ADK Agent Architecture, short/long-term memory banks
 │   ├── images/                         # Generated high-resolution blueprints
-│   │   ├── repo_banner.png             # Wide thematic repository banner
 │   │   ├── azure_architecture.png      # Azure network architecture
 │   │   ├── azure_vm_runner_flow.png    # Azure VM Runner flow
 │   │   ├── aws_architecture.png        # AWS VPC architecture
 │   │   ├── gcp_architecture.png        # GCP VPC architecture
 │   │   ├── demo_deployment_flow.png    # Container application flow
 │   │   ├── compute_decision_tree.png   # Compute decision flowchart
-│   │   └── vpc_ingress_loadbalancer_flow.png # VPC Ingress Load Balancer flow
+│   │   ├── vpc_ingress_loadbalancer_flow.png # VPC Ingress Load Balancer flow
+│   │   └── vpc_firewall_loadbalancer_deepdive.png # VPC Firewall Ingress/Egress deep dive
 │   └── eraser/                         # Eraser.io Diagram-as-Code DSL text files
 │       ├── azure-architecture.txt
 │       ├── aws-architecture.txt
@@ -40,7 +44,8 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │       ├── demo-deployment-flow.txt
 │       ├── compute-decision-tree.txt
 │       ├── agent-engine-flow.txt
-│       └── vpc-ingress-flow.txt
+│       ├── vpc-ingress-flow.txt
+│       └── vpc-firewall-deepdive.txt
 ├── terraform/                          # Infrastructure provisioning (IaC)
 │   ├── azure/                          # VNet, VM Runner, AKS, ACR, Log Analytics, KV, Blob (main.tf, outputs.tf)
 │   ├── aws/                            # VPC, EKS, ECS, Cognito, RDS Postgres, ElastiCache Redis
@@ -53,7 +58,8 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   │   │   └── k8s-deploy.yml          # Kube-linter & kubectl apply
 │   │   └── .gitlab-ci.yml              # Root pipelines coordinating the build flows
 │   └── scripts/
-│       └── sync-registry.sh            # Safe container mirroring script using skopeo/docker
+│       ├── sync-registry.sh            # Safe container mirroring script using skopeo/docker
+│       └── pre-commit.sh               # Git pre-commit validator (Hadolint, TF format, yamllint)
 ├── manifests/                          # Runtime deployment specs
 │   ├── azure/                          # Ingress definitions & ACA YAML templates
 │   ├── aws/                            # EKS deployment YAMLs & ECS task JSONs
@@ -65,6 +71,10 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── Dockerfile                      # Production multi-stage non-root build
 │   └── public/
 │       └── index.html                  # Responsive glassmorphic dashboard UI
+├── demo-projects/                      # Standardized project templates by cloud service
+│   ├── azure-function-app/             # Serverless Azure Function running Fastify HTTP trigger
+│   ├── gcp-cloud-run-app/              # Serverless GCP Cloud Run container running Fastify
+│   └── aws-ecs-fargate-app/            # Microservice task container running Fastify
 └── agent-engine/                       # AI Agent Engine (Fastify + OpenTelemetry)
     ├── package.json
     ├── server.js                       # Telemetry tracing spans, Redis context, GCS bucket

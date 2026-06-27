@@ -1,0 +1,36 @@
+// VPC Ingress Load Balancer & Egress Firewall Deep Dive Flow
+// Copy this code into https://app.eraser.io
+
+Client [icon: monitor, label: "External HTTPS Client"]
+
+subgraph Public_Internet
+  DNS [icon: gcp, label: "Cloud DNS / Route 53"]
+end
+
+subgraph Cloud_Network_Boundaries
+  WAF [icon: key, label: "Web Application Firewall (WAF / Cloud Armor)"]
+  Load_Balancer [icon: gcp-load-balancing, label: "HTTPS Application Load Balancer (Layer 7)"]
+  
+  subgraph VPC_Private_Subnets [color: blue]
+    Compute_Nodes [icon: gcp-cloud-run, label: "Application Compute (AKS / Cloud Run / Fargate)"]
+  end
+  
+  subgraph Central_Security_Subnet [color: red]
+    Central_Firewall [icon: key, label: "Central Cloud Firewall (Deep Packet Inspection)"]
+    NAT_Gateway [icon: gcp, label: "NAT Gateway / Cloud NAT"]
+  end
+end
+
+External_SaaS_APIs [icon: monitor, label: "Allowed Outbound Destinations"]
+
+// Inbound Routing Flow
+Client -> DNS: Resolve Endpoint
+DNS -> Client: Return Public IP
+Client -> WAF: Submit HTTPS request
+WAF -> Load_Balancer: Inspect & forward clean traffic
+Load_Balancer -> Compute_Nodes: Route path/host to private compute nodes
+
+// Egress Routing Flow (Inspected)
+Compute_Nodes -> Central_Firewall: Redirect 0.0.0.0/0 outbound traffic
+Central_Firewall -> NAT_Gateway: Approve domain whitelist matching
+NAT_Gateway -> External_SaaS_APIs: Route request securely via static egress IP

@@ -1,0 +1,13 @@
+{
+  "name": "gcp-cloudrun-fastify",
+  "version": "1.0.0",
+  "description": "Google Cloud Run serverless application running Fastify",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "fastify": "^4.26.1"
+  }
+}

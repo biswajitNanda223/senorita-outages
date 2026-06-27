@@ -1,0 +1,16 @@
+{
+  "name": "azure-function-fastify",
+  "version": "1.0.0",
+  "description": "Azure Function App running a Fastify serverless trigger",
+  "main": "index.js",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "dependencies": {
+    "fastify": "^4.26.1"
+  },
+  "devDependencies": {
+    "azure-functions-core-tools": "^4.x"
+  }
+}
