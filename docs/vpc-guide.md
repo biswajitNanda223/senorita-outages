@@ -1,6 +1,16 @@
-# 🌐 Virtual Private Cloud (VPC) Mapping Guide: AWS, Azure, and GCP
+# 🎬 Virtual Private Cloud (VPC) Mapping Guide: AWS, Azure, and GCP
+## *MasalaOps Presents: "The Cloud Borders Action Blockbuster!"*
+
+> [!NOTE]
+> **Director's Note:** In this global blockbuster, we compare how the three cloud giant empires (AWS, Azure, and GCP) build their virtual borders, subnets, and gates. Our heroes must cross these clouds securely using Private Endpoints and peered networks while dodging the hacker villains.
 
 A comprehensive breakdown of how private isolated networking works across the three major cloud providers: **AWS VPC**, **Azure VNet**, and **GCP VPC**.
+
+### 🔗 Advanced Networking References:
+*   [docs/vpc-and-firewalls.md](file:///c:/personal Projects/Deployment/docs/vpc-and-firewalls.md) - Why we need VPCs, Layer 4 vs Layer 7 Load Balancers, and Cloud Firewalls egress routing.
+*   [docs/azure-connection-guide.md](file:///c:/personal Projects/Deployment/docs/azure-connection-guide.md) - Secure GitLab to AKS connection via OIDC and Key Vault Managed Identity.
+*   [docs/azure-ai-foundry/README.md](file:///c:/personal Projects/Deployment/docs/azure-ai-foundry/README.md) - Securing Azure AI Foundry workspaces using Private Endpoints.
+*   [docs/kubernetes-and-docker/README.md](file:///c:/personal Projects/Deployment/docs/kubernetes-and-docker/README.md) - Kubernetes internal routing, ClusterIP, NodePort, LoadBalancer, and Ingress controllers.
 
 ---
 
