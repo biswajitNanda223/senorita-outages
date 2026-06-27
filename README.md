@@ -32,6 +32,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── azure-connection-guide.md       # Guide: Connect GitLab to AKS using OIDC & Key Vault access rules
 │   ├── edge-security-and-multicloud-demo.md # Guide: Akamai Edge WAF & F5 BIG-IP Ingress to Multi-Cloud Fastify App
 │   ├── deploy-website-on-cloud-run.md  # Guide: Containerize and deploy static websites on Google Cloud Run
+│   ├── serverless-functions-guide.md   # Guide: AWS Lambda, Azure Functions & GCP Cloud Functions — use cases + code
 │   ├── azure-ai-foundry/               # Workspace: Azure AI Foundry deployment, models, security
 │   │   └── README.md                   # AI Foundry model endpoints, prompt flow orchestration guide
 │   ├── kubernetes-and-docker/          # Workspace: Container and orchestration master references
