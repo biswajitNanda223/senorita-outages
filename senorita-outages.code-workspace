@@ -83,7 +83,7 @@
     "workbench.editor.highlightModifiedTabs": true,
     "workbench.editor.labelFormat": "short",
     "window.title": "🌶️ ${dirty}${activeEditorShort} · Senorita Outages",
-    "window.commandCenter": true,
+    "window.commandCenter": false,
     "terminal.integrated.cursorStyle": "line",
     "terminal.integrated.cursorBlinking": true,
     "terminal.integrated.smoothScrolling": true,
