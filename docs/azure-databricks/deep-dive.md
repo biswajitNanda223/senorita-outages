@@ -209,7 +209,7 @@ with mlflow.start_run(run_name="rag_query_execution"):
 ## 🏗️ 4. Terraform Deployment: Azure Databricks with VNet Injection
 
 ```terraform
-# terraform/azure/databricks.tf
+# Reference example (not yet implemented under terraform/azure/)
 
 # 1. Azure Databricks Workspace with VNet Injection
 resource "azurerm_databricks_workspace" "adb" {

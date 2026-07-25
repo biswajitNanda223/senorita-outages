@@ -25,6 +25,10 @@
       "path": "docs/azure-ai-foundry"
     },
     {
+      "name": "🧱 STUDY · Azure Databricks",
+      "path": "docs/azure-databricks"
+    },
+    {
       "name": "🐳 GUIDE · Kubernetes & Docker",
       "path": "docs/kubernetes-and-docker"
     },
