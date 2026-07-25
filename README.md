@@ -7,6 +7,11 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 > [!IMPORTANT]
 > If you can handle a Bollywood masala thriller, you can easily manage high-availability container clusters and zero-trust private networks! This repository is fully isolated inside private VNets/VPCs, utilizing Private Endpoints, Centralized Firewalls, and System-Assigned Managed Identities.
 
+> [!TIP]
+> Open `senorita-outages.code-workspace` in VS Code for the full MasalaOps
+> experience: cinematic saffron, magenta, and teal accents; role-based folder
+> names; tuned editor guides; launch configurations; and one-click DevOps tasks.
+
 ---
 
 ## 🗺️ Monorepo Directory Layout
@@ -16,7 +21,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 ├── README.md                           # Master guide, cloud comparisons, and getting started
 ├── gemini.md                           # AI prompt guide & Entra ID token exchange flows
 ├── agent.md                            # Coding standards, security check, and agent rules
-├── senorita-outages.code-workspace     # VS Code Workspace file with Masala theme highlights
+├── senorita-outages.code-workspace     # Cinematic VS Code palette, grouped folders, tasks, and launchers
 ├── docs/                               # High-Level Design (HLD) files & architecture diagrams
 │   ├── azure-hld.md                    # Azure network spoke routing, Key Vault, VM, and logs
 │   ├── aws-hld.md                      # AWS VPC, multi-AZ, EKS nodes, and Cognito specs

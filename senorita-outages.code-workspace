@@ -1,35 +1,35 @@
 {
   "folders": [
     {
-      "name": "[Monorepo Root]",
+      "name": "🎬 SENORITA OUTAGES",
       "path": "."
     },
     {
-      "name": "[Service] fastify-backend",
+      "name": "🚀 APP · Fastify Backend",
       "path": "demo-app"
     },
     {
-      "name": "[Service] agent-engine",
+      "name": "🤖 AI · Agent Engine",
       "path": "agent-engine"
     },
     {
-      "name": "[IaC] terraform-provisioning",
+      "name": "🏗️ IaC · Terraform",
       "path": "terraform"
     },
     {
-      "name": "[Manifests] kubernetes-specifications",
+      "name": "☸️ OPS · Kubernetes",
       "path": "manifests"
     },
     {
-      "name": "[Guide] azure-ai-foundry",
+      "name": "🧠 GUIDE · Azure AI Foundry",
       "path": "docs/azure-ai-foundry"
     },
     {
-      "name": "[Guide] kubernetes-and-docker",
+      "name": "🐳 GUIDE · Kubernetes & Docker",
       "path": "docs/kubernetes-and-docker"
     },
     {
-      "name": "[Documentation] architectural-hlds",
+      "name": "📚 DOCS · Architecture",
       "path": "docs"
     }
   ],
@@ -59,8 +59,80 @@
     "files.trimTrailingWhitespace": true,
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.bracketPairs": "active",
+    "editor.guides.bracketPairsHorizontal": "active",
+    "editor.guides.highlightActiveIndentation": true,
+    "editor.cursorBlinking": "phase",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.fontLigatures": true,
+    "editor.lineHeight": 24,
     "editor.minimap.enabled": true,
+    "editor.minimap.renderCharacters": false,
+    "editor.minimap.showSlider": "always",
     "editor.renderWhitespace": "selection",
+    "editor.smoothScrolling": true,
+    "editor.stickyScroll.enabled": true,
+    "breadcrumbs.enabled": true,
+    "explorer.compactFolders": false,
+    "workbench.list.smoothScrolling": true,
+    "workbench.tree.indent": 18,
+    "workbench.tree.renderIndentGuides": "always",
+    "workbench.editor.highlightModifiedTabs": true,
+    "workbench.editor.labelFormat": "short",
+    "window.title": "🌶️ ${dirty}${activeEditorShort} · Senorita Outages",
+    "window.commandCenter": true,
+    "terminal.integrated.cursorStyle": "line",
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.smoothScrolling": true,
+    "workbench.colorCustomizations": {
+      "activityBar.background": "#17132B",
+      "activityBar.foreground": "#FFB000",
+      "activityBar.inactiveForeground": "#897FA8",
+      "activityBarBadge.background": "#FF3D81",
+      "activityBarBadge.foreground": "#FFFFFF",
+      "activityBar.activeBorder": "#FFB000",
+      "sideBar.background": "#12101F",
+      "sideBar.foreground": "#EAE5FF",
+      "sideBar.border": "#322A50",
+      "sideBarTitle.foreground": "#FFB000",
+      "sideBarSectionHeader.background": "#1D1833",
+      "sideBarSectionHeader.foreground": "#F6D77B",
+      "editorGroupHeader.tabsBackground": "#100E1B",
+      "editorGroupHeader.tabsBorder": "#322A50",
+      "tab.activeBackground": "#211A38",
+      "tab.activeForeground": "#FFFFFF",
+      "tab.activeBorderTop": "#FF3D81",
+      "tab.inactiveBackground": "#151121",
+      "tab.inactiveForeground": "#938AAE",
+      "titleBar.activeBackground": "#20142E",
+      "titleBar.activeForeground": "#FFF4D6",
+      "titleBar.inactiveBackground": "#15101F",
+      "titleBar.border": "#4A275C",
+      "statusBar.background": "#007C78",
+      "statusBar.foreground": "#FFFFFF",
+      "statusBar.debuggingBackground": "#D14D00",
+      "statusBar.noFolderBackground": "#6F2B78",
+      "statusBarItem.hoverBackground": "#009B94",
+      "panel.background": "#100E1B",
+      "panel.border": "#3D315E",
+      "terminal.background": "#0D0B16",
+      "terminal.foreground": "#E8E2F5",
+      "terminalCursor.foreground": "#FFB000",
+      "focusBorder": "#FFB000",
+      "selection.background": "#FF3D8155",
+      "list.activeSelectionBackground": "#4A275C",
+      "list.activeSelectionForeground": "#FFFFFF",
+      "list.hoverBackground": "#29203F",
+      "editorLineNumber.activeForeground": "#FFB000",
+      "editorCursor.foreground": "#FF3D81",
+      "editorBracketHighlight.foreground1": "#FFB000",
+      "editorBracketHighlight.foreground2": "#22C7B8",
+      "editorBracketHighlight.foreground3": "#FF62A4",
+      "editorBracketHighlight.foreground4": "#8B7CFF",
+      "gitDecoration.addedResourceForeground": "#4FD69C",
+      "gitDecoration.modifiedResourceForeground": "#FFB000",
+      "gitDecoration.deletedResourceForeground": "#FF5C73",
+      "gitDecoration.untrackedResourceForeground": "#22C7B8"
+    },
     "telemetry.telemetryLevel": "off"
   },
   "launch": {
@@ -71,7 +143,7 @@
         "request": "launch",
         "name": "Debug Fastify Backend",
         "skipFiles": ["<node_internals>/**"],
-        "program": "${workspaceFolder:[Service] fastify-backend}/server.js",
+        "program": "${workspaceFolder:🚀 APP · Fastify Backend}/server.js",
         "env": {
           "NODE_ENV": "development",
           "PORT": "8080",
@@ -84,7 +156,7 @@
         "request": "launch",
         "name": "Debug AI Agent Engine",
         "skipFiles": ["<node_internals>/**"],
-        "program": "${workspaceFolder:[Service] agent-engine}/server.js",
+        "program": "${workspaceFolder:🤖 AI · Agent Engine}/server.js",
         "env": {
           "NODE_ENV": "development",
           "PORT": "9000",
@@ -103,7 +175,7 @@
         "type": "shell",
         "command": "npm run dev",
         "options": {
-          "cwd": "${workspaceFolder:[Service] fastify-backend}"
+          "cwd": "${workspaceFolder:🚀 APP · Fastify Backend}"
         },
         "group": "build",
         "presentation": {
@@ -116,7 +188,7 @@
         "type": "shell",
         "command": "npm start",
         "options": {
-          "cwd": "${workspaceFolder:[Service] agent-engine}"
+          "cwd": "${workspaceFolder:🤖 AI · Agent Engine}"
         },
         "group": "build",
         "presentation": {
@@ -129,7 +201,7 @@
         "type": "shell",
         "command": "bash ./cicd/scripts/pre-commit.sh",
         "options": {
-          "cwd": "${workspaceFolder:[Monorepo Root]}"
+          "cwd": "${workspaceFolder:🎬 SENORITA OUTAGES}"
         },
         "group": "test",
         "presentation": {
@@ -142,7 +214,7 @@
         "type": "shell",
         "command": "terraform validate",
         "options": {
-          "cwd": "${workspaceFolder:[IaC] terraform-provisioning}/azure"
+          "cwd": "${workspaceFolder:🏗️ IaC · Terraform}/azure"
         },
         "group": "test",
         "presentation": {
@@ -159,7 +231,10 @@
       "redhat.vscode-yaml",
       "dbaeumer.vscode-eslint",
       "esbenp.prettier-vscode",
-      "gitlab.gitlab-workflow"
+      "gitlab.gitlab-workflow",
+      "pkief.material-icon-theme",
+      "usernamehw.errorlens",
+      "eamodio.gitlens"
     ]
   }
 }
