@@ -78,7 +78,7 @@
     "breadcrumbs.enabled": true,
     "explorer.compactFolders": false,
     "workbench.list.smoothScrolling": true,
-    "workbench.iconTheme": "vscode-great-icons",
+    "workbench.iconTheme": null,
     "workbench.productIconTheme": "Default",
     "workbench.tree.indent": 18,
     "workbench.tree.renderIndentGuides": "always",
