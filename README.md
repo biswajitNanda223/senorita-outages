@@ -107,7 +107,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 
 | Guide | Description | Key Topics / Cloud Technologies |
 |:---|:---|:---|
-| 🧱 **[Azure Databricks & GenAI](docs/azure-databricks/README.md)** | Study hub for Big Data & LLM RAG | Quick checks, VNet Injection, Delta Lake, Mosaic AI, Vector Search, MLflow |
+| 🧱 **[Azure Databricks & GenAI](docs/azure-databricks/README.md)** | Study hub for data, apps, analytics, and RAG | Apps deployment, MCP URLs, Genie Agents, AI Search, Delta Lake, MLflow |
 | ⎈ **[Helm Package Manager](docs/helm-kubernetes-guide.md)** | K8s Manifest Templating & Releases | Helm v3 architecture, Go templating, `values.yaml`, release rollbacks |
 | 🚗 **[K8s Sidecar Pattern](docs/kubernetes-sidecar-pattern-guide.md)** | Multi-Container Pod Design | Shared Network/Volumes, FluentBit, Envoy Proxy, K8s 1.28+ native sidecars |
 | 🛡️ **[DB Wall, DLQ, Email & CIDR](docs/db-dlq-email-cidr-master-guide.md)** | Network Isolation, Resiliency & Subnetting | Private Endpoint DB Wall, Dead Letter Queues, Async Email, CIDR Math |

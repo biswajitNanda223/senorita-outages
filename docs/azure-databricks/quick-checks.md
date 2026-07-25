@@ -14,6 +14,12 @@
 - **Gold:** aggregated, business-ready datasets.
 - **Mosaic AI:** tooling for GenAI development, evaluation, retrieval, and
   serving.
+- **AI Search:** current name for Vector Search; retrieves relevant unstructured
+  content for RAG.
+- **Genie Agent:** converts natural-language business questions into governed
+  analytics over curated structured data.
+- **MCP:** exposes governed Databricks tools to compatible agents over
+  Streamable HTTP.
 
 ## Architecture check
 
@@ -56,6 +62,24 @@
 7. Test with non-production data before promotion.
 ```
 
+## MCP URL recall
+
+```text
+Genie Agent:
+https://<workspace-hostname>/api/2.0/mcp/genie/{space_id}
+
+AI Search:
+https://<workspace-hostname>/api/2.0/mcp/ai-search/{catalog}/{schema}/{index}
+
+SQL:
+https://<workspace-hostname>/api/2.0/mcp/sql
+```
+
+Use OAuth for production. A valid token does not replace permissions on the
+underlying Genie Agent, AI Search index, SQL warehouse, or Unity Catalog data.
+
+Continue with the
+[end-to-end Apps, MCP, Genie, and AI Search guide](apps-mcp-genie-vector-search.md).
+
 > The Terraform in the [deep dive](deep-dive.md) is a reference example. There
 > is no deployable `terraform/azure/databricks.tf` in this repository yet.
-

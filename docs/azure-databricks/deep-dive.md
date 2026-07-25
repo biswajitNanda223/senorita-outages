@@ -130,31 +130,35 @@ Azure Databricks provides **Mosaic AI** for building, fine-tuning, evaluating, a
 graph TD
     Documents[Raw PDF / Docs / Text] -->|1. Ingest & Chunk| PySpark[Databricks PySpark Pipeline]
     PySpark -->|2. Generate Embeddings| EmbedModel[Databricks Foundation Model API\ne.g. bge-large-en]
-    EmbedModel -->|3. Store Vectors| VectorSearch[Databricks Vector Search Index]
+    EmbedModel -->|3. Store Vectors| VectorSearch[Databricks AI Search Index]
     
     UserQuery[User Natural Language Prompt] -->|4. Query| RAGApp[Fastify / Python RAG Service]
-    RAGApp -->|5. Vector Search Similarity| VectorSearch
+    RAGApp -->|5. AI Search Similarity| VectorSearch
     VectorSearch -->>|6. Relevant Context Chunks| RAGApp
     RAGApp -->|7. Prompt + Context| LLM[Databricks Model Serving\nLlama-3-70B / DeepSeek]
     LLM -->>|8. Grounded Answer| UserQuery
 ```
 
-### Python Code: Databricks Vector Search & RAG Retrieval
+### Python Code: Databricks AI Search & RAG Retrieval
+
+> Databricks AI Search is the current name for Vector Search. For index
+> creation, App resources, retrieval evaluation, and MCP integration, use the
+> [end-to-end guide](apps-mcp-genie-vector-search.md).
 ```python
 # databricks/genai_rag_pipeline.py
 import mlflow
-from databricks.vector_search.client import VectorSearchClient
+from databricks.ai_search.client import AISearchClient
 
-# 1. Initialize Databricks Vector Search Client
-vsc = VectorSearchClient()
+# 1. Initialize the current Databricks AI Search client
+search_client = AISearchClient()
 
-# Connect to or create Vector Search Endpoint
+# Retrieve an existing AI Search index
 endpoint_name = "enterprise-vector-endpoint"
 index_name = "unity_catalog.ai_db.enterprise_docs_index"
 
-# Query Vector Search Index for Top-3 Relevant Context Chunks
+# Query the AI Search index for the top three relevant chunks
 def retrieve_context(query_text: str):
-    index = vsc.get_index(endpoint_name=endpoint_name, index_name=index_name)
+    index = search_client.get_index(index_name=index_name)
     results = index.similarity_search(
         query_text=query_text,
         columns=["doc_id", "content_chunk", "source_url"],
@@ -174,7 +178,7 @@ with mlflow.start_run(run_name="rag_query_execution"):
     # Log query parameter
     mlflow.log_param("query", user_query)
     
-    # Retrieve context via Databricks Vector Search
+    # Retrieve context via Databricks AI Search
     context = retrieve_context(user_query)
     mlflow.log_text(context, "retrieved_context.txt")
     
@@ -239,4 +243,4 @@ resource "azurerm_databricks_workspace" "adb" {
 
 ## 🎬 MasalaOps Summary
 
-> *"Databricks = Data ka grand studio! Medallion Architecture = Raw script (Bronze) → Refined dialogue (Silver) → Final blockbuster release (Gold)! Vector Search + GenAI = Director ki memory jo instant answer deti hai!"*
+> *"Databricks = Data ka grand studio! Medallion Architecture = Raw script (Bronze) → Refined dialogue (Silver) → Final blockbuster release (Gold)! AI Search + GenAI = Director ki memory jo instant answer deti hai!"*
