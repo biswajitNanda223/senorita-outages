@@ -1,0 +1,9 @@
+apiVersion: v2
+name: fastify-backend
+description: A production-grade Helm chart for the Fastify multi-cloud microservice
+type: application
+version: 1.0.0
+appVersion: "2.0.0"
+maintainers:
+  - name: Biswajit Nanda
+    email: biswajitnanda223@gmail.com

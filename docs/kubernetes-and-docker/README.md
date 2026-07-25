@@ -175,6 +175,8 @@ volumes:
 
 Kubernetes (K8s) is an open-source container orchestration platform that automates the deployment, scaling, load balancing, and self-healing management of containerized applications.
 
+![Kubernetes Architecture Deep-Dive Blueprint](../images/kubernetes_architecture_deepdive.png)
+
 ---
 
 ### 🏗️ 1. Complete Cluster Architecture: Master Node (Control Plane) vs. Worker Node
@@ -325,6 +327,8 @@ A **Container** is a lightweight, isolated process running on Linux kernel primi
 - **Control Groups (cgroups):** Enforces hard resource limits (e.g., "This container cannot consume more than 512MB RAM").
 
 ---
+
+![Kubernetes Pod Deployment Lifecycle Flow](../images/kubernetes_pod_lifecycle_flow.png)
 
 ### 🔄 What Happens Step-by-Step When You Run `kubectl apply -f deployment.yaml`?
 

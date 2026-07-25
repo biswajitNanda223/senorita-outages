@@ -1,0 +1,24 @@
+// Kubernetes kubectl apply Pod Deployment Sequence Flow
+// Copy this code into https://app.eraser.io
+
+DevOps_Engineer [icon: user, label: "DevOps Engineer"]
+kubectl_CLI [icon: terminal, label: "kubectl CLI"]
+API_Server [icon: gcp, label: "kube-apiserver"]
+etcd_DB [icon: database, label: "etcd DB"]
+ReplicaSet_Controller [icon: monitor, label: "kube-controller-manager"]
+Scheduler [icon: monitor, label: "kube-scheduler"]
+Kubelet_Agent [icon: server, label: "Worker Kubelet"]
+containerd_Runtime [icon: gcp-cloud-run, label: "containerd CRI"]
+
+DevOps_Engineer -> kubectl_CLI: kubectl apply -f deployment.yaml
+kubectl_CLI -> API_Server: HTTP POST /apis/apps/v1/...
+API_Server -> etcd_DB: Save Deployment Spec
+API_Server -> ReplicaSet_Controller: Watch event: Deployment created
+ReplicaSet_Controller -> API_Server: Create ReplicaSet + 3 Unscheduled Pods
+API_Server -> Scheduler: Watch event: Pods with nodeName=""
+Scheduler -> API_Server: Select Node (Assign Pod 1 -> Worker 1)
+API_Server -> Kubelet_Agent: Watch event: Pod assigned to node
+Kubelet_Agent -> containerd_Runtime: Pull Image & Start Pod Container
+containerd_Runtime -> Kubelet_Agent: Container Running
+Kubelet_Agent -> API_Server: Update Pod Status = Running
+API_Server -> etcd_DB: Save Running Status

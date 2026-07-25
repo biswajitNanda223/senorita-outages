@@ -1,0 +1,76 @@
+# values.yaml - Default Helm configuration values for Fastify Backend
+
+replicaCount: 3
+
+image:
+  repository: us-central1-docker.pkg.dev/enterprise-devops-project/web-repo/fastify-app
+  pullPolicy: IfNotPresent
+  tag: "v2.0.0"
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: "fastify-sa"
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/metrics"
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  fsGroup: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: api.senorita-outages.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: fastify-tls-cert
+      hosts:
+        - api.senorita-outages.com
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+env:
+  NODE_ENV: "production"
+  PORT: "8080"
+  LOG_LEVEL: "info"

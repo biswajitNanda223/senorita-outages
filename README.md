@@ -35,6 +35,9 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── serverless-functions-guide.md   # Guide: AWS Lambda, Azure Functions & GCP Cloud Functions — use cases + code
 │   ├── messaging-and-databases-guide.md # Guide: Messaging (Service Bus/SQS/PubSub), Streaming, Event Grid & NoSQL (CosmosDB/DynamoDB/Firestore)
 │   ├── db-dlq-email-cidr-master-guide.md # Guide: DB Wall, DLQ Handling, Async Email Services & Multi-Cloud CIDR Subnetting
+│   ├── azure-databricks-and-genai-guide.md # Guide: Azure Databricks VNet Injection, Delta Lake & Mosaic AI GenAI RAG Pipelines
+│   ├── helm-kubernetes-guide.md        # Guide: Helm v3 package management, Templating, values-prod.yaml & CLI cheat sheet
+│   ├── kubernetes-sidecar-pattern-guide.md # Guide: K8s Sidecar Pattern, shared IPC/network, Envoy/FluentBit & K8s 1.28+ native sidecars
 │   ├── azure-ai-foundry/               # Workspace: Azure AI Foundry deployment, models, security
 │   │   └── README.md                   # AI Foundry model endpoints, prompt flow orchestration guide
 │   ├── kubernetes-and-docker/          # Workspace: Container and orchestration master references
@@ -99,6 +102,9 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 
 | Guide | Description | Key Topics / Cloud Technologies |
 |:---|:---|:---|
+| 🧱 **[Azure Databricks & GenAI](docs/azure-databricks-and-genai-guide.md)** | Big Data & LLM RAG Pipelines | VNet Injection NPIP, Delta Lake, Mosaic AI, Vector Search, MLflow 3.x |
+| ⎈ **[Helm Package Manager](docs/helm-kubernetes-guide.md)** | K8s Manifest Templating & Releases | Helm v3 architecture, Go templating, `values.yaml`, release rollbacks |
+| 🚗 **[K8s Sidecar Pattern](docs/kubernetes-sidecar-pattern-guide.md)** | Multi-Container Pod Design | Shared Network/Volumes, FluentBit, Envoy Proxy, K8s 1.28+ native sidecars |
 | 🛡️ **[DB Wall, DLQ, Email & CIDR](docs/db-dlq-email-cidr-master-guide.md)** | Network Isolation, Resiliency & Subnetting | Private Endpoint DB Wall, Dead Letter Queues, Async Email, CIDR Math |
 | 📬 **[Messaging & Databases](docs/messaging-and-databases-guide.md)** | Enterprise Messaging & NoSQL | Service Bus, Event Hub, Event Grid, Cosmos DB, SQS, DynamoDB, Pub/Sub |
 | ⚡ **[Serverless Functions](docs/serverless-functions-guide.md)** | Event-driven compute across clouds | AWS Lambda, Azure Functions, GCP Cloud Functions, triggers, code |

@@ -1,0 +1,36 @@
+// Kubernetes Control Plane & Worker Node Deep-Dive Architecture
+// Copy this code into https://app.eraser.io
+
+subgraph Control_Plane [color: blue, label: "Master Node (Control Plane)"]
+  API_Server [icon: gcp, label: "kube-apiserver (Gateway & Auth)"]
+  etcd_DB [icon: database, label: "etcd (Key-Value State Store)"]
+  Scheduler [icon: monitor, label: "kube-scheduler (Node Placement)"]
+  Controller_Manager [icon: monitor, label: "kube-controller-manager (Reconciliation)"]
+  Cloud_Controller [icon: cloud, label: "cloud-controller-manager (AWS/Azure/GCP)"]
+end
+
+subgraph Worker_Node_1 [color: green, label: "Worker Node 1"]
+  Kubelet_1 [icon: server, label: "kubelet (Node Agent)"]
+  KubeProxy_1 [icon: key, label: "kube-proxy (L4 Network Rules)"]
+  Runtime_1 [icon: gcp-cloud-run, label: "containerd (CRI Runtime)"]
+  Pod_1 [icon: gcp-cloud-run, label: "Pod 1: Fastify App + Sidecar"]
+end
+
+subgraph Worker_Node_2 [color: green, label: "Worker Node 2"]
+  Kubelet_2 [icon: server, label: "kubelet (Node Agent)"]
+  KubeProxy_2 [icon: key, label: "kube-proxy (L4 Network Rules)"]
+  Runtime_2 [icon: gcp-cloud-run, label: "containerd (CRI Runtime)"]
+  Pod_2 [icon: gcp-cloud-run, label: "Pod 2: Fastify App"]
+end
+
+API_Server -> etcd_DB: Read/Write cluster state
+API_Server -> Scheduler: Watch unscheduled pods
+API_Server -> Controller_Manager: Reconciliation loops
+API_Server -> Kubelet_1: HTTPS PodSpecs
+API_Server -> Kubelet_2: HTTPS PodSpecs
+
+Kubelet_1 -> Runtime_1: CRI Start Container
+Runtime_1 -> Pod_1: Run Fastify Pod
+
+Kubelet_2 -> Runtime_2: CRI Start Container
+Runtime_2 -> Pod_2: Run Fastify Pod
