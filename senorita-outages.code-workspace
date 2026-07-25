@@ -78,8 +78,12 @@
     "breadcrumbs.enabled": true,
     "explorer.compactFolders": false,
     "workbench.list.smoothScrolling": true,
-    "workbench.iconTheme": null,
+    "workbench.iconTheme": "material-icon-theme",
     "workbench.productIconTheme": "Default",
+    "material-icon-theme.folders.theme": "specific",
+    "material-icon-theme.folders.color": "#FFB000",
+    "material-icon-theme.rootFolders.color": "#22C7B8",
+    "material-icon-theme.files.color": "#C9BFFF",
     "workbench.tree.indent": 18,
     "workbench.tree.renderIndentGuides": "always",
     "workbench.editor.highlightModifiedTabs": true,
@@ -238,6 +242,7 @@
       "dbaeumer.vscode-eslint",
       "esbenp.prettier-vscode",
       "gitlab.gitlab-workflow",
+      "pkief.material-icon-theme",
       "usernamehw.errorlens",
       "eamodio.gitlens"
     ]
