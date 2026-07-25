@@ -284,15 +284,88 @@ We bypass the public internet to reach managed databases and Key Vaults using **
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Start Here
 
-1.  **Infrastructure Provisioning:**
-    *   Navigate to your cloud of choice: e.g. `cd terraform/azure`
-    *   Initialize: `terraform init`
-    *   Configure workspace details in `terraform.tfvars`.
-    *   Run: `terraform apply`
-2.  **Configure GitLab CI/CD:**
-    *   Commit this repo to GitLab.
-    *   Configure GitLab variables for Cloud OIDC authentication. See details in `cicd/gitlab-ci/templates/`.
-3.  **Deployment manifests:**
-    *   Apply Kubernetes manifests: e.g. `kubectl apply -f manifests/azure/`
+### 1. Open the study workspace
+
+```bash
+code senorita-outages.code-workspace
+```
+
+The workspace groups applications, infrastructure, Kubernetes manifests, and
+focused study guides. For Databricks, begin with the
+[study hub](docs/azure-databricks/README.md), then use the
+[quick checks](docs/azure-databricks/quick-checks.md) before opening the
+[deep dive](docs/azure-databricks/deep-dive.md).
+
+### 2. Run an application locally
+
+```bash
+cd demo-app
+npm install
+npm start
+```
+
+The demo expects PostgreSQL and Redis connection settings. Copy values into a
+local `.env` file; never commit credentials. The AI runtime has its own setup
+guide at [agent-engine/README.md](agent-engine/README.md).
+
+### 3. Review infrastructure safely
+
+Choose one provider directory and inspect the plan before making changes:
+
+```bash
+cd terraform/azure
+terraform init
+terraform fmt -check
+terraform validate
+terraform plan
+```
+
+Do not run `terraform apply` until the backend, variables, cloud identity,
+network ranges, estimated cost, and plan output have been reviewed. The
+Databricks material currently contains reference snippets only; deployable
+Databricks Terraform has not yet been added under `terraform/azure/`.
+
+### 4. Validate Kubernetes manifests
+
+```bash
+kubectl apply --dry-run=server -f manifests/kubernetes-templates/
+```
+
+Server-side dry runs require access to a compatible cluster. Replace example
+registry addresses, namespaces, secrets, ingress hosts, and storage settings
+before deployment. Start with the
+[manifest templates guide](manifests/kubernetes-templates/README.md).
+
+### 5. Understand the delivery pipeline
+
+GitLab pipeline definitions live under `cicd/gitlab-ci/`, split into automated
+and manual-promotion workflows. Configure protected CI/CD variables or OIDC
+federation for cloud access; do not add static cloud credentials to pipeline
+files.
+
+---
+
+## ✅ Quick Repository Check
+
+Before treating an example as deployable, confirm:
+
+- [ ] The linked file exists and is marked as implementation, not reference code.
+- [ ] Placeholder image names, domains, IDs, and credentials were replaced.
+- [ ] Terraform formatting, validation, and plan checks pass.
+- [ ] Kubernetes manifests pass a server-side dry run against the target version.
+- [ ] Container images are linted and scanned for high or critical findings.
+- [ ] Public access, IAM/RBAC, firewall rules, and secret handling were reviewed.
+- [ ] Environment-specific cost, backup, monitoring, and rollback plans exist.
+
+This repository is a learning and architecture blueprint. Its examples require
+environment-specific configuration and security review before production use.
+
+---
+
+## 🎬 Final Scene
+
+Study the architecture, validate the change, inspect the plan, and only then
+deploy. In MasalaOps terms: **the pipeline turns green after rehearsal—not
+during the premiere.**
