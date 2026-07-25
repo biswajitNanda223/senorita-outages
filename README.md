@@ -14,6 +14,21 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 
 ---
 
+## ⚡ Quick Navigation
+
+| Goal | Start here |
+|:---|:---|
+| Run the Fastify demo | [Local application setup](#2-run-an-application-locally) |
+| Study Azure Databricks | [Databricks study hub](docs/azure-databricks/README.md) |
+| Deploy a Databricks App | [Apps, MCP, Genie, and AI Search guide](docs/azure-databricks/apps-mcp-genie-vector-search.md) |
+| Review Kubernetes sidecars | [Sidecar pattern guide](docs/kubernetes-sidecar-pattern-guide.md) |
+| Validate reusable manifests | [Kubernetes templates](manifests/kubernetes-templates/README.md) |
+| Compare cloud compute | [Compute decision matrix](docs/compute-decision-matrix.md) |
+| Review private networking | [VPC and firewall guide](docs/vpc-and-firewalls.md) |
+| Understand CI/CD | [GitLab workers and environments](docs/gitlab-workers-and-environments.md) |
+
+---
+
 ## 🗺️ Monorepo Directory Layout
 
 ```text
@@ -40,7 +55,11 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── serverless-functions-guide.md   # Guide: AWS Lambda, Azure Functions & GCP Cloud Functions — use cases + code
 │   ├── messaging-and-databases-guide.md # Guide: Messaging (Service Bus/SQS/PubSub), Streaming, Event Grid & NoSQL (CosmosDB/DynamoDB/Firestore)
 │   ├── db-dlq-email-cidr-master-guide.md # Guide: DB Wall, DLQ Handling, Async Email Services & Multi-Cloud CIDR Subnetting
-│   ├── azure-databricks/                 # Study hub: quick checks, deep dive, and implementation status
+│   ├── azure-databricks/               # Focused Azure Databricks learning path
+│   │   ├── README.md                   # Study map and implementation status
+│   │   ├── quick-checks.md             # Fast revision and production checklist
+│   │   ├── deep-dive.md                # VNet injection, Delta Lake, Mosaic AI, and RAG
+│   │   └── apps-mcp-genie-vector-search.md # Apps deployment, MCP, Genie, and AI Search E2E
 │   ├── helm-kubernetes-guide.md        # Guide: Helm v3 package management, Templating, values-prod.yaml & CLI cheat sheet
 │   ├── kubernetes-sidecar-pattern-guide.md # Guide: K8s Sidecar Pattern, shared IPC/network, Envoy/FluentBit & K8s 1.28+ native sidecars
 │   ├── azure-ai-foundry/               # Workspace: Azure AI Foundry deployment, models, security
@@ -184,6 +203,81 @@ graph TD
 
 ---
 
+## 🧱 Azure Databricks End-to-End Path
+
+The Databricks material is organized as a progressive study module:
+
+1. [Quick checks](docs/azure-databricks/quick-checks.md) for terminology,
+   architecture review, MCP URL recall, and deployment gates.
+2. [Deep dive](docs/azure-databricks/deep-dive.md) for VNet injection, the
+   Bronze/Silver/Gold medallion model, Delta Lake, Mosaic AI, and RAG concepts.
+3. [Apps, MCP, Genie, and AI Search](docs/azure-databricks/apps-mcp-genie-vector-search.md)
+   for the implementation workflow.
+
+### Complete request flow
+
+```mermaid
+flowchart LR
+    Source[Documents and Delta tables] --> Chunks[Governed document chunks]
+    Chunks --> Search[Databricks AI Search]
+    Tables[Curated business tables] --> Genie[Genie Agent]
+    Search --> App[Databricks App]
+    Genie --> App
+    App --> Model[Model Serving]
+    User[Authenticated user] --> App
+    Agent[MCP client or coding agent] --> SearchMCP[AI Search MCP]
+    Agent --> GenieMCP[Genie MCP]
+    SearchMCP --> Search
+    GenieMCP --> Genie
+```
+
+Use the services by question type:
+
+| Question or task | Correct service |
+|:---|:---|
+| “What does this policy, ticket, or runbook say?” | AI Search over document chunks |
+| “What were sales by region last quarter?” | Genie Agent over curated tables |
+| “Find the policy and compare it with current metrics.” | AI Search + Genie, orchestrated by the App |
+| “Expose governed Databricks tools to my IDE/agent.” | Managed MCP servers |
+
+### Managed MCP URL patterns
+
+```text
+Genie Agent
+https://<workspace-hostname>/api/2.0/mcp/genie/{genie_space_id}
+
+AI Search (formerly Vector Search)
+https://<workspace-hostname>/api/2.0/mcp/ai-search/{catalog}/{schema}/{index_name}
+
+Databricks SQL
+https://<workspace-hostname>/api/2.0/mcp/sql
+
+Unity Catalog function
+https://<workspace-hostname>/api/2.0/mcp/functions/{catalog}/{schema}/{function_name}
+```
+
+Use OAuth for production MCP clients. Authentication does not bypass permissions
+on the underlying Genie Agent, AI Search index, SQL warehouse, or Unity Catalog
+objects. Never commit tokens in MCP configuration.
+
+### What the Databricks guide deploys
+
+The end-to-end guide explains how to:
+
+- Deploy `demo-app/` through workspace sync or directly from Git.
+- Bind the app to the Databricks-provided port and use stdout/stderr logging.
+- Create a Change Data Feed-enabled Delta chunk table.
+- Create, sync, filter, query, and evaluate an AI Search index.
+- Attach AI Search and Genie Agent resources to an App service principal.
+- Use stateful Genie conversation APIs and managed MCP endpoints.
+- Apply least privilege, retrieval evaluation, monitoring, and cost controls.
+
+The application and documentation exist in this repository. Deployable
+Databricks workspace Terraform does **not** yet exist under `terraform/azure/`;
+the Terraform shown in the deep dive is reference code.
+
+---
+
 ## ☸️ Standardized Kubernetes Deployments & Ingress Routing
 
 Workload deployments in private networks require layered routing and secure credential injections. Clean templates are available under `/manifests/kubernetes-templates`.
@@ -296,7 +390,8 @@ The workspace groups applications, infrastructure, Kubernetes manifests, and
 focused study guides. For Databricks, begin with the
 [study hub](docs/azure-databricks/README.md), then use the
 [quick checks](docs/azure-databricks/quick-checks.md) before opening the
-[deep dive](docs/azure-databricks/deep-dive.md).
+[deep dive](docs/azure-databricks/deep-dive.md) and
+[end-to-end implementation guide](docs/azure-databricks/apps-mcp-genie-vector-search.md).
 
 ### 2. Run an application locally
 
@@ -344,6 +439,21 @@ GitLab pipeline definitions live under `cicd/gitlab-ci/`, split into automated
 and manual-promotion workflows. Configure protected CI/CD variables or OIDC
 federation for cloud access; do not add static cloud credentials to pipeline
 files.
+
+---
+
+## 📋 Implementation Status
+
+| Area | Repository status | Before production |
+|:---|:---|:---|
+| Fastify demo and Agent Engine | Runnable source and Dockerfiles | Supply real data services, secrets, images, and observability |
+| Azure, AWS, and GCP Terraform | Reference infrastructure modules | Configure remote state, variables, identity, costs, and reviewed plans |
+| Databricks Apps | Deployment procedure documented for `demo-app/` | Create the App and attach environment-specific resources |
+| Databricks AI Search and Genie | End-to-end SDK/API/MCP guide | Create workspace resources, curated data, permissions, and evaluations |
+| Databricks Terraform | Reference snippet only | Implement and review `terraform/azure/databricks.tf` |
+| Kubernetes | Cloud and reusable manifests, Helm chart, sidecar example | Replace placeholders and validate against the target cluster |
+| GitLab CI/CD | Automated checks and manual promotion examples | Configure runners, protected variables, OIDC, environments, and approvals |
+| Architecture documentation | Multi-cloud HLDs and diagrams | Reconcile examples with organizational standards and threat models |
 
 ---
 
