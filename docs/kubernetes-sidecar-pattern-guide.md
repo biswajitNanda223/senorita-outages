@@ -125,11 +125,34 @@ spec:
 
 ---
 
-## 🚀 5. Kubernetes 1.28+ Native Sidecar Containers
+The complete, directly validatable example is available at
+[`manifests/kubernetes-templates/pod-with-sidecar.yaml`](../manifests/kubernetes-templates/pod-with-sidecar.yaml).
+It includes the Fluent Bit configuration, resource requests and limits, health
+probes, a shared log volume, and the application container.
+
+Apply it after replacing the example application image:
+
+```bash
+kubectl apply -f manifests/kubernetes-templates/namespace.yaml
+kubectl apply -f manifests/kubernetes-templates/pod-with-sidecar.yaml
+kubectl logs -n enterprise-apps deployment/fastify-with-sidecar -c fluent-bit -f
+```
+
+> [!IMPORTANT]
+> The application must actually write files to `LOG_FILE_PATH`. If it only logs
+> to stdout/stderr, use the cluster's node-level log collector instead of adding
+> a per-Pod log-shipping sidecar.
+
+---
+
+## 🚀 5. Kubernetes-Native Sidecar Containers
 
 Historically, K8s did not distinguish between main containers and sidecar containers. If the main container finished early, the sidecar would keep running indefinitely, preventing job completion.
 
-In **Kubernetes 1.28+**, K8s introduced **Native Sidecar Containers** using `initContainers` with `restartPolicy: Always`:
+Kubernetes introduced restartable init containers as an alpha feature in v1.28,
+enabled the feature by default in v1.29, and graduated it to stable in v1.33.
+A native sidecar is declared under `initContainers` with the container-level
+`restartPolicy: Always`:
 
 ```yaml
 spec:
@@ -150,7 +173,12 @@ spec:
 
 ### Advantages of Native Sidecars:
 - Starts **before** the main container (ensuring secrets/tunnels are ready before app boots).
-- Shut down **after** the main container terminates.
+- Shuts down **after** the main application containers terminate.
+- Restarts independently and does not prevent a Kubernetes Job from completing.
+
+For clusters older than v1.29, verify the `SidecarContainers` feature gate or use
+the legacy multi-container pattern under `containers`. See the
+[official Kubernetes sidecar documentation](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/).
 
 ---
 

@@ -2,6 +2,20 @@
 
 This folder provides a complete blueprint for deploying enterprise container workloads securely inside isolated Kubernetes environments.
 
+## Sidecar Example
+
+[`pod-with-sidecar.yaml`](pod-with-sidecar.yaml) runs the Fastify application
+with a Kubernetes-native Fluent Bit sidecar. Both containers share an
+`emptyDir` volume: the application writes log files and Fluent Bit tails them.
+They also share the Pod network, but keep separate images, processes, resource
+limits, and filesystems.
+
+The sidecar is a restartable init container (`restartPolicy: Always`), which is
+the stable native sidecar model in Kubernetes v1.33+. Replace the example
+application image before applying it. For the architecture, lifecycle, and
+cases where a sidecar is unnecessary, read the
+[Sidecar Pattern Deep Dive](../../docs/kubernetes-sidecar-pattern-guide.md).
+
 ---
 
 ## 🔒 Configuration & State Management

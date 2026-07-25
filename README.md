@@ -77,7 +77,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── azure/                          # Ingress, ACA, and Agent Engine ACA templates
 │   ├── aws/                            # EKS deployment YAMLs & ECS task JSONs
 │   ├── gcp/                            # GKE services, GKE deploys, and Agent Engine Cloud Run YAMLs
-│   ├── kubernetes-templates/           # Standard Namespace, ConfigMap, Secrets, Service, Ingress blueprints
+│   ├── kubernetes-templates/           # Standard resources plus a native Fluent Bit sidecar example
 │   └── argocd/                         # GitOps Application & AppProject manifests and setup guides
 ├── demo-app/                           # Multi-cloud Node.js + Fastify demo project
 │   ├── package.json
@@ -182,6 +182,21 @@ graph TD
 ## ☸️ Standardized Kubernetes Deployments & Ingress Routing
 
 Workload deployments in private networks require layered routing and secure credential injections. Clean templates are available under `/manifests/kubernetes-templates`.
+
+### Sidecar in one minute
+
+A sidecar is a supporting container that runs in the **same Pod** as the main
+application. It shares the Pod IP and can share volumes, while keeping logging,
+proxying, or secret-refresh logic out of the application image. In this repo,
+the Fastify container writes to a shared volume and Fluent Bit reads that volume
+and forwards the logs. The runnable template is
+[`pod-with-sidecar.yaml`](manifests/kubernetes-templates/pod-with-sidecar.yaml);
+the lifecycle and trade-offs are covered in the
+[Kubernetes Sidecar Pattern guide](docs/kubernetes-sidecar-pattern-guide.md).
+
+Use a sidecar when the helper must be coupled to each application Pod. Prefer a
+node-level DaemonSet or the platform's built-in stdout log collection when one
+collector per Pod would only add cost and operational overhead.
 
 ### 1. Workload Orchestration & Credential Injections
 *   **Isolated Namespaces:** WORKLOADS are deployed inside dedicated namespaces (`namespace.yaml`) to isolate networking and RBAC.

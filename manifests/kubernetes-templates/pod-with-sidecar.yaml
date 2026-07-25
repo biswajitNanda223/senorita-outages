@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-sidecar-config
+  namespace: enterprise-apps
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush         1
+        Log_Level     info
+
+    [INPUT]
+        Name          tail
+        Path          /var/log/app/*.log
+        Read_from_Head true
+        Tag           fastify
+
+    [OUTPUT]
+        Name          stdout
+        Match         *
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastify-with-sidecar
+  namespace: enterprise-apps
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fastify-with-sidecar
+  template:
+    metadata:
+      labels:
+        app: fastify-with-sidecar
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+      initContainers:
+        # A restartable init container is a Kubernetes-native sidecar.
+        - name: fluent-bit
+          image: fluent/fluent-bit:3.2.10
+          restartPolicy: Always
+          args:
+            - --config=/fluent-bit/etc/fluent-bit.conf
+          volumeMounts:
+            - name: shared-logs
+              mountPath: /var/log/app
+              readOnly: true
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc/fluent-bit.conf
+              subPath: fluent-bit.conf
+              readOnly: true
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+      containers:
+        - name: fastify-app
+          # Replace this example image with the image built from demo-app/.
+          image: enterpriseregistry.azurecr.io/demo-app:latest
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: LOG_FILE_PATH
+              value: /var/log/app/api.log
+          volumeMounts:
+            - name: shared-logs
+              mountPath: /var/log/app
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: shared-logs
+          emptyDir: {}
+        - name: fluent-bit-config
+          configMap:
+            name: fluent-bit-sidecar-config
