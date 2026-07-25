@@ -95,6 +95,25 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 
 ---
 
+## 📚 Master Architectural Guides & Documentation Index
+
+| Guide | Description | Key Topics / Cloud Technologies |
+|:---|:---|:---|
+| 🛡️ **[DB Wall, DLQ, Email & CIDR](docs/db-dlq-email-cidr-master-guide.md)** | Network Isolation, Resiliency & Subnetting | Private Endpoint DB Wall, Dead Letter Queues, Async Email, CIDR Math |
+| 📬 **[Messaging & Databases](docs/messaging-and-databases-guide.md)** | Enterprise Messaging & NoSQL | Service Bus, Event Hub, Event Grid, Cosmos DB, SQS, DynamoDB, Pub/Sub |
+| ⚡ **[Serverless Functions](docs/serverless-functions-guide.md)** | Event-driven compute across clouds | AWS Lambda, Azure Functions, GCP Cloud Functions, triggers, code |
+| 🐳 **[Kubernetes & Docker](docs/kubernetes-and-docker/README.md)** | Orchestration & Container Security | Multi-stage Dockerfiles, docker-compose, K8s control plane, SecurityContext |
+| 🤖 **[Azure AI Foundry](docs/azure-ai-foundry/README.md)** | Cloud AI Model Deployment | Azure OpenAI SDK, Prompt Flow, Managed Identity authentication |
+| 🛡️ **[Edge Security & Multi-Cloud](docs/edge-security-and-multicloud-demo.md)** | Ingress Perimeter Security | Akamai Edge WAF/CDN, F5 BIG-IP Ingress, Fastify multi-cloud demo |
+| 🚀 **[Cloud Run Web Deployment](docs/deploy-website-on-cloud-run.md)** | Serverless Website Deployment | NGINX Docker packaging, Artifact Registry, custom domains + SSL |
+| 🔒 **[Secrets Management](docs/secrets-management.md)** | Zero-credential runtime fetching | Key Vault, Secrets Manager, System Managed Identity, OIDC |
+| ☸️ **[Argo CD GitOps](manifests/argocd/README.md)** | Declarative K8s CD | AppProject, Application CRD, drift auto-healing, push vs pull |
+| 🌐 **[VPC & Firewalls](docs/vpc-and-firewalls.md)** | Isolation & Ingress Routing | Subnet boundaries, ALB vs NLB, Cloud Firewalls, egress whitelisting |
+| 🗺️ **[VPC Mapping Guide](docs/vpc-guide.md)** | Cross-Cloud Network Comparison | AWS VPC vs Azure VNet vs GCP Global VPC, DB private subnets |
+| 🦊 **[GitLab Connection Guide](docs/azure-connection-guide.md)** | OIDC Federated Credentials | Token exchange sequence flow, Key Vault access rules |
+
+---
+
 ## 🎬 MasalaOps: Dramatic Cloud Learning
 
 Are database connections failing? Or are your pipelines throwing errors? Learn how to debug cloud setups using our cinematic guide:
