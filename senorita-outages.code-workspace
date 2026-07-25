@@ -78,6 +78,8 @@
     "breadcrumbs.enabled": true,
     "explorer.compactFolders": false,
     "workbench.list.smoothScrolling": true,
+    "workbench.iconTheme": "vs-seti",
+    "workbench.productIconTheme": "Default",
     "workbench.tree.indent": 18,
     "workbench.tree.renderIndentGuides": "always",
     "workbench.editor.highlightModifiedTabs": true,
@@ -236,7 +238,6 @@
       "dbaeumer.vscode-eslint",
       "esbenp.prettier-vscode",
       "gitlab.gitlab-workflow",
-      "pkief.material-icon-theme",
       "usernamehw.errorlens",
       "eamodio.gitlens"
     ]
