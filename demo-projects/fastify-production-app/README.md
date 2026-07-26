@@ -19,11 +19,12 @@ demo-projects/fastify-production-app/
 │   └── infrastructure.ts              # Pools, clients, dependency wiring
 ├── test/                              # Unit and Fastify inject tests
 ├── migrations/001_init.sql            # PostgreSQL schema and indexes
-├── load/orders.js                     # k6 ramp to 2,000 concurrent users
+├── load/orders.ts                     # Typed k6 ramp to 2,000 concurrent users
 ├── Dockerfile                         # Builder + non-root runtime
 ├── compose.yaml                       # API, worker, PostgreSQL, Redis
 ├── tsconfig.json                      # Editor and test typechecking
 ├── tsconfig.build.json                # Production-only emission
+├── tsconfig.load.json                 # k6 ESM TypeScript typechecking
 └── package.json                       # Build, test, API, worker commands
 ```
 
@@ -49,7 +50,7 @@ Read the code in dependency order:
 | Connections and wiring | [`src/infrastructure.ts`](src/infrastructure.ts) |
 | Background processing | [`src/worker.ts`](src/worker.ts) |
 | Database structure | [`migrations/`](migrations/) |
-| 2,000-user test | [`load/orders.js`](load/orders.js) |
+| 2,000-user test | [`load/orders.ts`](load/orders.ts) |
 
 ## Run locally
 
@@ -282,7 +283,7 @@ Install [k6](https://grafana.com/docs/k6/latest/set-up/install-k6/), run the API
 on production-like infrastructure, then:
 
 ```bash
-k6 run load/orders.js
+k6 run load/orders.ts
 ```
 
 The scenario ramps gradually to 2,000 VUs, holds for 10 minutes, and requires:

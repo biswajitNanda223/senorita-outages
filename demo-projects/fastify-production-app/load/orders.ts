@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-function randomHex(length) {
+function randomHex(length: number): string {
   let value = '';
   for (let index = 0; index < length; index += 1) {
     value += Math.floor(Math.random() * 16).toString(16);
@@ -9,7 +9,7 @@ function randomHex(length) {
   return value;
 }
 
-function randomUUID() {
+function randomUUID(): string {
   return `${randomHex(8)}-${randomHex(4)}-4${randomHex(3)}-a${randomHex(3)}-${randomHex(12)}`;
 }
 

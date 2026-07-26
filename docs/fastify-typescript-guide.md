@@ -8,7 +8,7 @@ For the complete runnable code—not only documentation snippets—open:
 - [Production project README](../demo-projects/fastify-production-app/README.md)
 - [Application source](../demo-projects/fastify-production-app/src/)
 - [Tests](../demo-projects/fastify-production-app/test/)
-- [2,000-user load scenario](../demo-projects/fastify-production-app/load/orders.js)
+- [2,000-user TypeScript load scenario](../demo-projects/fastify-production-app/load/orders.ts)
 
 ## 1. Mental model
 

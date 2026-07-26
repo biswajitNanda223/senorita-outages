@@ -119,7 +119,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   │   ├── src/                        # API, domain, repository, cache, worker
 │   │   ├── test/                       # Unit and Fastify inject tests
 │   │   ├── migrations/                 # PostgreSQL schema and indexes
-│   │   ├── load/                       # 2,000-user k6 scenario
+│   │   ├── load/                       # 2,000-user typed k6 scenario
 │   │   ├── Dockerfile                  # Multi-stage non-root image
 │   │   └── compose.yaml                # API, worker, PostgreSQL, Redis
 │   ├── azure-function-app/             # Fastify on Azure Functions
