@@ -855,6 +855,552 @@ Build one vertical slice in this order:
 - [ ] Dependencies and images are scanned.
 - [ ] Metrics, traces, alerts, retries, and rollback behavior are defined.
 
+## 19. Complete coded example
+
+This example joins the concepts into one small backend. The route depends on a
+service class, the service depends on a repository interface, and the concrete
+repository uses PostgreSQL. Redis provides cache-aside behavior.
+
+### Project layout
+
+```text
+fastify-store/
+  src/
+    app.ts
+    server.ts
+    types/fastify.d.ts
+    plugins/connections.ts
+    modules/items/item.types.ts
+    modules/items/item.repository.ts
+    modules/items/item.service.ts
+    modules/items/item.routes.ts
+    shared/concurrency.ts
+  test/items.test.ts
+  package.json
+  tsconfig.json
+  Dockerfile
+  compose.yaml
+  .dockerignore
+```
+
+### Install and configure
+
+```bash
+npm init -y
+npm install fastify fastify-plugin pg redis
+npm install --save-dev typescript tsx @types/node @types/pg
+```
+
+`package.json`:
+
+```json
+{
+  "name": "fastify-store",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/server.js",
+    "test": "tsx --test test/**/*.test.ts"
+  },
+  "dependencies": {
+    "fastify": "^5.0.0",
+    "fastify-plugin": "^5.0.0",
+    "pg": "^8.0.0",
+    "redis": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+`tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "rootDir": ".",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}
+```
+
+For a production project, use a separate `tsconfig.build.json` that includes
+only `src/`; that keeps tests out of the runtime image.
+
+### Domain types
+
+`src/modules/items/item.types.ts`:
+
+```typescript
+export interface Item {
+  id: string;
+  title: string;
+  price: number;
+}
+
+export interface CreateItem {
+  title: string;
+  price: number;
+}
+```
+
+### Repository interface and class
+
+`src/modules/items/item.repository.ts`:
+
+```typescript
+import type { Pool } from 'pg';
+import type { CreateItem, Item } from './item.types';
+
+export interface ItemRepository {
+  findById(id: string): Promise<Item | null>;
+  create(input: CreateItem): Promise<Item>;
+}
+
+export class PostgresItemRepository implements ItemRepository {
+  constructor(private readonly pool: Pool) {}
+
+  async findById(id: string): Promise<Item | null> {
+    const result = await this.pool.query<Item>(
+      `SELECT id, title, price::float
+       FROM items
+       WHERE id = $1`,
+      [id]
+    );
+    return result.rows[0] ?? null;
+  }
+
+  async create(input: CreateItem): Promise<Item> {
+    const result = await this.pool.query<Item>(
+      `INSERT INTO items (title, price)
+       VALUES ($1, $2)
+       RETURNING id, title, price::float`,
+      [input.title, input.price]
+    );
+    return result.rows[0];
+  }
+}
+```
+
+The `$1` and `$2` placeholders prevent SQL injection. The class owns query
+behavior, but it does not create or close the shared pool.
+
+### Service class with Redis caching
+
+`src/modules/items/item.service.ts`:
+
+```typescript
+import type { RedisClientType } from 'redis';
+import type { ItemRepository } from './item.repository';
+import type { CreateItem, Item } from './item.types';
+
+export class ItemNotFoundError extends Error {
+  constructor(id: string) {
+    super(`Item ${id} was not found`);
+    this.name = 'ItemNotFoundError';
+  }
+}
+
+export class ItemService {
+  constructor(
+    private readonly repository: ItemRepository,
+    private readonly cache: RedisClientType
+  ) {}
+
+  async getById(id: string): Promise<Item> {
+    const key = `item:${id}`;
+    const cached = await this.cache.get(key);
+    if (cached) return JSON.parse(cached) as Item;
+
+    const item = await this.repository.findById(id);
+    if (!item) throw new ItemNotFoundError(id);
+
+    await this.cache.set(key, JSON.stringify(item), { EX: 60 });
+    return item;
+  }
+
+  async create(input: CreateItem): Promise<Item> {
+    const item = await this.repository.create(input);
+    await this.cache.set(`item:${item.id}`, JSON.stringify(item), { EX: 60 });
+    return item;
+  }
+}
+```
+
+The service contains business flow, not HTTP details. In a high-availability
+system, decide whether cache failure should fail the request or merely log and
+continue to PostgreSQL.
+
+### Typed Fastify decoration
+
+`src/types/fastify.d.ts`:
+
+```typescript
+import type { Pool } from 'pg';
+import type { RedisClientType } from 'redis';
+import type { ItemService } from '../modules/items/item.service';
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    db: Pool;
+    cache: RedisClientType;
+    itemService: ItemService;
+  }
+}
+```
+
+### Connection plugin
+
+`src/plugins/connections.ts`:
+
+```typescript
+import fp from 'fastify-plugin';
+import { Pool } from 'pg';
+import { createClient } from 'redis';
+import { PostgresItemRepository } from '../modules/items/item.repository';
+import { ItemService } from '../modules/items/item.service';
+
+export default fp(async (app) => {
+  const db = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: Number(process.env.DB_POOL_SIZE ?? 10),
+    connectionTimeoutMillis: 5_000,
+    idleTimeoutMillis: 30_000
+  });
+
+  const cache = createClient({
+    url: process.env.REDIS_URL ?? 'redis://localhost:6379'
+  });
+
+  cache.on('error', (error) => app.log.error({ error }, 'Redis error'));
+
+  await Promise.all([db.query('SELECT 1'), cache.connect()]);
+
+  const repository = new PostgresItemRepository(db);
+  const itemService = new ItemService(repository, cache);
+
+  app.decorate('db', db);
+  app.decorate('cache', cache);
+  app.decorate('itemService', itemService);
+
+  app.addHook('onClose', async () => {
+    await Promise.allSettled([db.end(), cache.quit()]);
+  });
+});
+```
+
+Connections are established once during startup. `onClose` releases them once
+during shutdown.
+
+### Typed routes and schemas
+
+`src/modules/items/item.routes.ts`:
+
+```typescript
+import type { FastifyPluginAsync } from 'fastify';
+import { ItemNotFoundError } from './item.service';
+import type { CreateItem } from './item.types';
+
+interface ItemParams {
+  id: string;
+}
+
+const itemRoutes: FastifyPluginAsync = async (app) => {
+  app.get<{ Params: ItemParams }>('/items/:id', {
+    schema: {
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: { id: { type: 'string', minLength: 1 } }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      return await app.itemService.getById(request.params.id);
+    } catch (error: unknown) {
+      if (error instanceof ItemNotFoundError) {
+        return reply.code(404).send({
+          code: 'ITEM_NOT_FOUND',
+          message: error.message
+        });
+      }
+      throw error;
+    }
+  });
+
+  app.post<{ Body: CreateItem }>('/items', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['title', 'price'],
+        additionalProperties: false,
+        properties: {
+          title: { type: 'string', minLength: 1, maxLength: 100 },
+          price: { type: 'number', minimum: 0 }
+        }
+      }
+    }
+  }, async (request, reply) => {
+    const item = await app.itemService.create(request.body);
+    return reply.code(201).send(item);
+  });
+};
+
+export default itemRoutes;
+```
+
+### App factory and server entrypoint
+
+`src/app.ts`:
+
+```typescript
+import Fastify, { type FastifyInstance } from 'fastify';
+import connections from './plugins/connections';
+import itemRoutes from './modules/items/item.routes';
+
+export async function buildApp(): Promise<FastifyInstance> {
+  const app = Fastify({
+    logger: true,
+    requestTimeout: 10_000
+  });
+
+  app.get('/health/live', async () => ({ status: 'alive' }));
+  await app.register(connections);
+
+  app.get('/health/ready', async () => {
+    await app.db.query('SELECT 1');
+    return { status: 'ready' };
+  });
+
+  await app.register(itemRoutes, { prefix: '/api' });
+  return app;
+}
+```
+
+The connection plugin is registered before any route that uses `app.db`.
+
+`src/server.ts`:
+
+```typescript
+import { buildApp } from './app';
+
+const port = Number(process.env.PORT ?? 8080);
+
+async function main(): Promise<void> {
+  const app = await buildApp();
+  let closing = false;
+
+  async function shutdown(signal: NodeJS.Signals): Promise<void> {
+    if (closing) return;
+    closing = true;
+    app.log.info({ signal }, 'Graceful shutdown started');
+
+    const forcedExit = setTimeout(() => process.exit(1), 15_000);
+    forcedExit.unref();
+
+    await app.close();
+    clearTimeout(forcedExit);
+  }
+
+  process.once('SIGINT', () => void shutdown('SIGINT'));
+  process.once('SIGTERM', () => void shutdown('SIGTERM'));
+
+  await app.listen({ host: '0.0.0.0', port });
+}
+
+void main().catch((error: unknown) => {
+  console.error(error);
+  process.exit(1);
+});
+```
+
+### Bounded async helper
+
+`src/shared/concurrency.ts`:
+
+```typescript
+export async function mapConcurrent<T, R>(
+  values: readonly T[],
+  concurrency: number,
+  worker: (value: T, index: number) => Promise<R>
+): Promise<R[]> {
+  if (!Number.isInteger(concurrency) || concurrency < 1) {
+    throw new RangeError('concurrency must be a positive integer');
+  }
+
+  const results = new Array<R>(values.length);
+  let nextIndex = 0;
+
+  async function consume(): Promise<void> {
+    while (true) {
+      const index = nextIndex++;
+      if (index >= values.length) return;
+      results[index] = await worker(values[index], index);
+    }
+  }
+
+  const workers = Array.from(
+    { length: Math.min(concurrency, values.length) },
+    () => consume()
+  );
+
+  await Promise.all(workers);
+  return results;
+}
+```
+
+Usage:
+
+```typescript
+const items = await mapConcurrent(ids, 10, (id) =>
+  app.itemService.getById(id)
+);
+```
+
+This limits pressure to ten active operations while preserving input order.
+
+### Test service behavior without real connections
+
+`test/items.test.ts`:
+
+```typescript
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import type { RedisClientType } from 'redis';
+import type { ItemRepository } from '../src/modules/items/item.repository';
+import { ItemService } from '../src/modules/items/item.service';
+
+test('loads a missing cache value from repository', async () => {
+  const repository: ItemRepository = {
+    async findById(id) {
+      return { id, title: 'Keyboard', price: 50 };
+    },
+    async create(input) {
+      return { id: 'created', ...input };
+    }
+  };
+
+  const values = new Map<string, string>();
+  const cache = {
+    get: async (key: string) => values.get(key) ?? null,
+    set: async (key: string, value: string) => {
+      values.set(key, value);
+      return 'OK';
+    }
+  } as unknown as RedisClientType;
+
+  const service = new ItemService(repository, cache);
+  const item = await service.getById('42');
+
+  assert.equal(item.title, 'Keyboard');
+  assert.ok(values.has('item:42'));
+});
+```
+
+### Database initialization
+
+Run once through a migration tool:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE IF NOT EXISTS items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title VARCHAR(100) NOT NULL,
+  price NUMERIC(12, 2) NOT NULL CHECK (price >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+### Docker and local dependencies
+
+Use the multi-stage Dockerfile from section 15. Add `.dockerignore`:
+
+```dockerignore
+node_modules
+dist
+.git
+.env
+*.log
+coverage
+```
+
+`compose.yaml`:
+
+```yaml
+services:
+  api:
+    build:
+      context: .
+      target: runtime
+    environment:
+      PORT: "8080"
+      DATABASE_URL: postgres://app:app@postgres:5432/store
+      REDIS_URL: redis://redis:6379
+      DB_POOL_SIZE: "10"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: store
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d store"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:8-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres-data:
+```
+
+Start and verify:
+
+```bash
+docker compose up --build
+
+curl -X POST http://localhost:8080/api/items \
+  -H "content-type: application/json" \
+  -d '{"title":"Keyboard","price":50}'
+
+curl http://localhost:8080/health/live
+curl http://localhost:8080/health/ready
+```
+
+The first item read comes from PostgreSQL and fills Redis. Later reads use the
+cached object until its TTL expires.
+
 ## Repository examples
 
 - [`demo-app/src/server.ts`](../demo-app/src/server.ts): PostgreSQL, Redis,
