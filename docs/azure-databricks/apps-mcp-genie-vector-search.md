@@ -46,7 +46,7 @@ token in source code or commit it to an MCP configuration.
 
 Databricks Apps runs Node.js applications directly; it does not build or use the
 repository Dockerfile. The app must listen on `0.0.0.0` and on the runtime port.
-The existing `demo-app/server.js` already binds to `0.0.0.0` and reads `PORT`,
+The existing `demo-app/src/server.ts` already binds to `0.0.0.0` and reads `PORT`,
 which Databricks sets for Express-compatible Node runtimes.
 
 Create `demo-app/app.yaml`:

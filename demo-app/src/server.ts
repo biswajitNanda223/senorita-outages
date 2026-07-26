@@ -1,17 +1,25 @@
-// server.js
-// High-performance demo application backend using the Fastify framework
+import 'dotenv/config';
+import path from 'node:path';
+import process from 'node:process';
+import Fastify from 'fastify';
+import fastifyStatic from '@fastify/static';
+import { Pool } from 'pg';
+import { createClient } from 'redis';
 
-const fastify = require('fastify')({ logger: true });
-const path = require('path');
-const { Pool } = require('pg');
-const { createClient } = require('redis');
-require('dotenv').config();
+interface CreateItemBody {
+  title: string;
+  description?: string;
+}
 
-const port = process.env.PORT || 8080;
+const errorMessage = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
+const fastify = Fastify({ logger: true });
+const port = Number(process.env.PORT ?? 8080);
 
 // Register Fastify Static plugin to serve dashboard frontend
-fastify.register(require('@fastify/static'), {
-  root: path.join(__dirname, 'public'),
+fastify.register(fastifyStatic, {
+  root: path.resolve(process.cwd(), 'public'),
   prefix: '/'
 });
 
@@ -35,14 +43,16 @@ const redisClient = createClient({
   }
 });
 
-redisClient.on('error', (err) => fastify.log.error('Redis Client Error: ' + err.message));
+redisClient.on('error', (error: Error) => {
+  fastify.log.error({ error }, 'Redis client error');
+});
 
 (async () => {
   try {
     await redisClient.connect();
     fastify.log.info('Connected to Redis Cache');
-  } catch (err) {
-    fastify.log.error('Could not connect to Redis: ' + err.message);
+  } catch (error: unknown) {
+    fastify.log.error({ error }, 'Could not connect to Redis');
   }
 })();
 
@@ -58,8 +68,8 @@ redisClient.on('error', (err) => fastify.log.error('Redis Client Error: ' + err.
       );
     `);
     fastify.log.info('PostgreSQL Table Initialized');
-  } catch (err) {
-    fastify.log.error('PostgreSQL Init Error: ' + err.message);
+  } catch (error: unknown) {
+    fastify.log.error({ error }, 'PostgreSQL initialization failed');
   }
 })();
 
@@ -79,8 +89,8 @@ fastify.get('/health', async (request, reply) => {
   try {
     await pool.query('SELECT 1');
     status.db = 'connected';
-  } catch (e) {
-    status.db = `error: ${e.message}`;
+  } catch (error: unknown) {
+    status.db = `error: ${errorMessage(error)}`;
   }
 
   if (redisClient.isOpen) {
@@ -121,8 +131,8 @@ fastify.get('/api/data', async (request, reply) => {
           data: JSON.parse(cachedData)
         };
       }
-    } catch (err) {
-      fastify.log.error('Redis cache fetch failure: ' + err.message);
+    } catch (error: unknown) {
+      fastify.log.error({ error }, 'Redis cache fetch failed');
     }
   }
 
@@ -135,8 +145,8 @@ fastify.get('/api/data', async (request, reply) => {
     if (redisClient.isOpen) {
       try {
         await redisClient.set(cacheKey, JSON.stringify(items), { EX: 60 });
-      } catch (err) {
-        fastify.log.error('Redis cache write failure: ' + err.message);
+      } catch (error: unknown) {
+        fastify.log.error({ error }, 'Redis cache write failed');
       }
     }
 
@@ -144,13 +154,25 @@ fastify.get('/api/data', async (request, reply) => {
       source: 'database (PostgreSQL)',
       data: items
     };
-  } catch (err) {
-    reply.code(500).send({ error: err.message });
+  } catch (error: unknown) {
+    reply.code(500).send({ error: errorMessage(error) });
   }
 });
 
 // 4. Create new Item (Flushes Redis cache)
-fastify.post('/api/data', async (request, reply) => {
+fastify.post<{ Body: CreateItemBody }>('/api/data', {
+  schema: {
+    body: {
+      type: 'object',
+      required: ['title'],
+      additionalProperties: false,
+      properties: {
+        title: { type: 'string', minLength: 1, maxLength: 100 },
+        description: { type: 'string', maxLength: 2000 }
+      }
+    }
+  }
+}, async (request, reply) => {
   const { title, description } = request.body;
   if (!title) {
     reply.code(400).send({ error: 'Title is required' });
@@ -172,8 +194,8 @@ fastify.post('/api/data', async (request, reply) => {
       message: 'Item created and cache invalidated',
       item: result.rows[0]
     });
-  } catch (err) {
-    reply.code(500).send({ error: err.message });
+  } catch (error: unknown) {
+    reply.code(500).send({ error: errorMessage(error) });
   }
 });
 
@@ -204,10 +226,21 @@ fastify.get('/api/auth/sso', async (request, reply) => {
 const start = async () => {
   try {
     await fastify.listen({ port: port, host: '0.0.0.0' });
-    fastify.log.info(`Server listening on ${fastify.server.address().port}`);
-  } catch (err) {
-    fastify.log.error(err);
+    fastify.log.info({ port }, 'Server listening');
+  } catch (error: unknown) {
+    fastify.log.error(error);
     process.exit(1);
   }
 };
-start();
+
+const shutdown = async (signal: NodeJS.Signals): Promise<void> => {
+  fastify.log.info({ signal }, 'Shutting down');
+  await fastify.close();
+  if (redisClient.isOpen) await redisClient.quit();
+  await pool.end();
+};
+
+process.once('SIGINT', () => void shutdown('SIGINT'));
+process.once('SIGTERM', () => void shutdown('SIGTERM'));
+
+void start();

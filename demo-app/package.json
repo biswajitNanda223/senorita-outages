@@ -2,15 +2,24 @@
   "name": "enterprise-demo-app",
   "version": "1.0.0",
   "description": "Demo application for multi-cloud deployment verification using Fastify",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "build": "tsc -p tsconfig.json",
+    "prestart": "npm run build",
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/pg": "^8.11.14",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@fastify/static": "^7.0.0",
+    "@fastify/static": "^10.1.2",
     "dotenv": "^16.3.1",
-    "fastify": "^4.26.1",
+    "fastify": "^5.10.0",
     "pg": "^8.11.3",
     "redis": "^4.6.10"
   },

@@ -35,7 +35,7 @@ graph TD
 
 | Variable | Description | Example |
 | :--- | :--- | :--- |
-| `PORT` | Listening port for the Express server. | `8080` |
+| `PORT` | Listening port for the Fastify server. | `8080` |
 | `ENABLE_TRACING` | Toggles OpenTelemetry Cloud Trace exporting. | `true` |
 | `REDIS_HOST` | Host IP/Domain for the Redis cache. | `10.10.100.4` |
 | `REDIS_PORT` | Port for the Redis cache. | `6379` |
@@ -55,9 +55,22 @@ graph TD
    ```bash
    npm run dev
    ```
-3. Test the execution endpoint:
+3. Validate strict TypeScript and production compilation:
+   ```bash
+   npm run typecheck
+   npm run build
+   ```
+4. Test the execution endpoint:
    ```bash
    curl -X POST http://localhost:8080/api/agent/run \
      -H "Content-Type: application/json" \
      -d '{"sessionId": "test-session-123", "prompt": "Identify code vulnerability points"}'
    ```
+
+Source lives at `src/server.ts`; production executes compiled
+`dist/server.js`. Build output is ignored by Git and generated locally or in the
+Docker builder stage.
+
+For Fastify concepts, typed routes, schemas, plugins, hooks, event-loop
+behavior, and safe async loops, read the
+[Fastify + TypeScript guide](../docs/fastify-typescript-guide.md).

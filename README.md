@@ -19,6 +19,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 | Goal | Start here |
 |:---|:---|
 | Run the Fastify demo | [Local application setup](#2-run-an-application-locally) |
+| Learn Fastify + TypeScript | [Beginner-to-advanced Fastify guide](docs/fastify-typescript-guide.md) |
 | Study Azure Databricks | [Databricks study hub](docs/azure-databricks/README.md) |
 | Deploy a Databricks App | [Apps, MCP, Genie, and AI Search guide](docs/azure-databricks/apps-mcp-genie-vector-search.md) |
 | Review Kubernetes sidecars | [Sidecar pattern guide](docs/kubernetes-sidecar-pattern-guide.md) |
@@ -60,6 +61,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   │   ├── quick-checks.md             # Fast revision and production checklist
 │   │   ├── deep-dive.md                # VNet injection, Delta Lake, Mosaic AI, and RAG
 │   │   └── apps-mcp-genie-vector-search.md # Apps deployment, MCP, Genie, and AI Search E2E
+│   ├── fastify-typescript-guide.md     # Fastify + strict TypeScript, event loop, async loop patterns
 │   ├── helm-kubernetes-guide.md        # Guide: Helm v3 package management, Templating, values-prod.yaml & CLI cheat sheet
 │   ├── kubernetes-sidecar-pattern-guide.md # Guide: K8s Sidecar Pattern, shared IPC/network, Envoy/FluentBit & K8s 1.28+ native sidecars
 │   ├── azure-ai-foundry/               # Workspace: Azure AI Foundry deployment, models, security
@@ -105,7 +107,8 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   └── argocd/                         # GitOps Application & AppProject manifests and setup guides
 ├── demo-app/                           # Multi-cloud Node.js + Fastify demo project
 │   ├── package.json
-│   ├── server.js                       # Connects to PG DB + Redis caching, serves APIs
+│   ├── tsconfig.json                   # Strict TypeScript build configuration
+│   ├── src/server.ts                   # Typed Fastify API with PostgreSQL and Redis
 │   ├── Dockerfile                      # Production multi-stage non-root build
 │   └── public/
 │       └── index.html                  # Responsive glassmorphic dashboard UI
@@ -115,7 +118,8 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   └── aws-ecs-fargate-app/            # Microservice task container running Fastify
 └── agent-engine/                       # AI Agent Engine (Fastify + OpenTelemetry)
     ├── package.json
-    ├── server.js                       # Telemetry tracing spans, Redis context, GCS bucket
+    ├── tsconfig.json                   # Strict TypeScript build configuration
+    ├── src/server.ts                   # Typed tracing, Redis context, and GCS tools
     ├── Dockerfile                      # Production multi-stage runner
     └── README.md                       # Tracing setup and env parameters
 ```
@@ -127,6 +131,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 | Guide | Description | Key Topics / Cloud Technologies |
 |:---|:---|:---|
 | 🧱 **[Azure Databricks & GenAI](docs/azure-databricks/README.md)** | Study hub for data, apps, analytics, and RAG | Apps deployment, MCP URLs, Genie Agents, AI Search, Delta Lake, MLflow |
+| ⚡ **[Fastify + TypeScript](docs/fastify-typescript-guide.md)** | Beginner-to-advanced backend guide | Routes, schemas, plugins, hooks, event loop, async loops, testing, shutdown |
 | ⎈ **[Helm Package Manager](docs/helm-kubernetes-guide.md)** | K8s Manifest Templating & Releases | Helm v3 architecture, Go templating, `values.yaml`, release rollbacks |
 | 🚗 **[K8s Sidecar Pattern](docs/kubernetes-sidecar-pattern-guide.md)** | Multi-Container Pod Design | Shared Network/Volumes, FluentBit, Envoy Proxy, K8s 1.28+ native sidecars |
 | 🛡️ **[DB Wall, DLQ, Email & CIDR](docs/db-dlq-email-cidr-master-guide.md)** | Network Isolation, Resiliency & Subnetting | Private Endpoint DB Wall, Dead Letter Queues, Async Email, CIDR Math |

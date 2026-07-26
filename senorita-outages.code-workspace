@@ -164,7 +164,9 @@
         "request": "launch",
         "name": "Debug Fastify Backend",
         "skipFiles": ["<node_internals>/**"],
-        "program": "${workspaceFolder:🚀 APP · Fastify Backend}/server.js",
+        "program": "${workspaceFolder:🚀 APP · Fastify Backend}/src/server.ts",
+        "runtimeExecutable": "npx",
+        "runtimeArgs": ["tsx"],
         "env": {
           "NODE_ENV": "development",
           "PORT": "8080",
@@ -177,7 +179,9 @@
         "request": "launch",
         "name": "Debug AI Agent Engine",
         "skipFiles": ["<node_internals>/**"],
-        "program": "${workspaceFolder:🤖 AI · Agent Engine}/server.js",
+        "program": "${workspaceFolder:🤖 AI · Agent Engine}/src/server.ts",
+        "runtimeExecutable": "npx",
+        "runtimeArgs": ["tsx"],
         "env": {
           "NODE_ENV": "development",
           "PORT": "9000",

@@ -14,8 +14,11 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
+# Compile TypeScript and remove development dependencies
+RUN npm ci
+COPY tsconfig.json ./
+COPY src/ ./src/
+RUN npm run build && npm prune --omit=dev
 
 # STAGE 2: Lean runtime runner
 FROM node:20-alpine
@@ -33,8 +36,8 @@ RUN addgroup -g 1001 runrunner && \
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package*.json ./
 
-# Copy code
-COPY server.js ./
+# Copy compiled code
+COPY --from=builder /usr/src/app/dist ./dist
 
 # Fix ownership
 RUN chown -R runuser:runrunner /usr/src/app
@@ -44,4 +47,4 @@ USER runuser
 
 EXPOSE 8080
 
-CMD ["node", "server.js"]
+CMD ["node", "dist/server.js"]

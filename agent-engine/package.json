@@ -2,20 +2,33 @@
   "name": "enterprise-agent-engine",
   "version": "1.0.0",
   "description": "Enterprise AI Agent Engine with session caching, storage bucket persistence, and OpenTelemetry tracing using Fastify",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "build": "tsc -p tsconfig.json",
+    "prestart": "npm run build",
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@google-cloud/opentelemetry-cloud-trace-exporter": "^2.1.0",
-    "@google-cloud/storage": "^7.7.0",
-    "@opentelemetry/api": "^1.7.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.41.1",
-    "@opentelemetry/sdk-node": "^0.47.0",
+    "@google-cloud/opentelemetry-cloud-trace-exporter": "^3.0.0",
+    "@google-cloud/storage": "^7.21.0",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/auto-instrumentations-node": "^0.79.0",
+    "@opentelemetry/sdk-node": "^0.221.0",
     "dotenv": "^16.3.1",
-    "fastify": "^4.26.1",
+    "fastify": "^5.10.0",
     "redis": "^4.6.10"
+  },
+  "overrides": {
+    "brace-expansion": "^5.0.8",
+    "gaxios": "^7.3.0",
+    "uuid": "^11.1.1"
   },
   "author": "Antigravity",
   "license": "MIT"

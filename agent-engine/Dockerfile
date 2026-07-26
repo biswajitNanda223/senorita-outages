@@ -10,8 +10,12 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-# Install production dependencies
-RUN npm ci --only=production
+# Install dependencies, compile TypeScript, then prune build tools
+RUN npm ci
+
+COPY tsconfig.json ./
+COPY src/ ./src/
+RUN npm run build && npm prune --omit=dev
 
 #---------------------------------------------------------
 # STAGE 2: Runner Environment
@@ -31,8 +35,8 @@ RUN addgroup -g 1001 agentgroup && \
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package*.json ./
 
-# Copy source code files
-COPY server.js ./
+# Copy compiled application
+COPY --from=builder /usr/src/app/dist ./dist
 
 # Fix directory ownership
 RUN chown -R agentuser:agentgroup /usr/src/app
@@ -44,6 +48,6 @@ EXPOSE 8080
 
 # Configure health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD node -e "http.get('http://localhost:8080/health', (r) => { if (r.statusCode !== 200) process.exit(1); })"
+  CMD node -e "require('node:http').get('http://localhost:8080/health', (r) => { if (r.statusCode !== 200) process.exit(1); }).on('error', () => process.exit(1))"
 
-CMD ["node", "server.js"]
+CMD ["node", "dist/server.js"]

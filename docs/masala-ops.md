@@ -70,7 +70,7 @@ In a typical production cloud workspace, every component corresponds to a key ro
 ### 10. The Merge Conflict Face-Off (Sholay)
 *   **Dialogue Style:** *"Kitne aadmi the?"*
 *   **MasalaOps Version:** *"Kitne developers the? ... Do, Sarkar. Phir bhi code merge conflict ho gaya?! Uthao git merge tool!"*
-*   **The Drama:** Gabbar is furious because two developers edited the same line in `server.js` and caused a conflict that broke the release.
+*   **The Drama:** Gabbar is furious because two developers edited the same line in `src/server.ts` and caused a conflict that broke the release.
 
 ### 11. The Obsessive Pull Request (Kabir Singh)
 *   **Dialogue Style:** *"Preeti, tumhara build fail kaise hua? Maine bola tha na..."*

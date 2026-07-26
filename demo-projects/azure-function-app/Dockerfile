@@ -17,8 +17,11 @@ WORKDIR /home/site/wwwroot
 
 COPY package*.json ./
 
-# Install only production dependencies
-RUN npm ci --only=production
+# Install dependencies, compile TypeScript, and prune build tools
+RUN npm ci
+COPY tsconfig.json ./
+COPY src/ ./src/
+RUN npm run build && npm prune --omit=dev
 
 # STAGE 2: Secure Production Runner
 FROM mcr.microsoft.com/azure-functions/node:4-node20
@@ -30,13 +33,15 @@ ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
 WORKDIR /home/site/wwwroot
 
 # Create a non-root group and user for security isolation
-RUN addgroup -g 1001 runtimegroup && \
-    adduser -u 1001 -G runtimegroup -s /bin/sh -D runtimeuser
+RUN addgroup --gid 1001 runtimegroup && \
+    adduser --uid 1001 --gid 1001 --disabled-password \
+      --gecos "" --shell /bin/sh runtimeuser
 
 # Copy dependencies and application source code
 COPY --from=builder /home/site/wwwroot/node_modules ./node_modules
 COPY --from=builder /home/site/wwwroot/package*.json ./
-COPY host.json local.settings.json index.js ./
+COPY --from=builder /home/site/wwwroot/dist ./dist
+COPY host.json ./
 
 # Set folder ownership to the non-root user
 RUN chown -R runtimeuser:runtimegroup /home/site/wwwroot

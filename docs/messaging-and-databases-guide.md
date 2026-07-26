@@ -95,7 +95,7 @@ module.exports = { publishOrderEvent };
 
 ### Code: Fastify Route that Publishes Event
 ```javascript
-// demo-app/server.js (route addition)
+// demo-app/src/server.ts (route addition)
 const { publishOrderEvent } = require('./services/serviceBus');
 
 fastify.post('/api/orders', async (request, reply) => {

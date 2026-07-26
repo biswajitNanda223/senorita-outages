@@ -61,7 +61,7 @@ Long-term memory acts as the agent's file system, knowledge repository, and exec
 This code block demonstrates how the ADK agent loads transient context, searches long-term workspace files, and writes execution history during an active request:
 
 ```javascript
-// Example segment inside /agent-engine/server.js
+// Example segment inside /agent-engine/src/server.ts
 const { Storage } = require('@google-cloud/storage');
 const { createClient } = require('redis');
 

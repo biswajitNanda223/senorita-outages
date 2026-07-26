@@ -1,9 +1,8 @@
-// server.js
-// AWS ECS Fargate task running a Fastify HTTP service
+import process from 'node:process';
+import Fastify from 'fastify';
 
-const fastify = require('fastify')({ logger: true });
-
-const port = process.env.PORT || 8080;
+const fastify = Fastify({ logger: true });
+const port = Number(process.env.PORT ?? 8080);
 
 fastify.get('/health', async (request, reply) => {
   return { status: 'healthy', platform: 'AWS ECS Fargate' };
@@ -21,12 +20,12 @@ fastify.get('/api/message', async (request, reply) => {
 const start = async () => {
   try {
     // Listen on 0.0.0.0 for AWS Fargate tasks
-    await fastify.listen({ port: port, host: '0.0.0.0' });
+    await fastify.listen({ port, host: '0.0.0.0' });
     fastify.log.info(`ECS Fargate service listening on port ${port}`);
-  } catch (err) {
-    fastify.log.error(err);
+  } catch (error: unknown) {
+    fastify.log.error(error);
     process.exit(1);
   }
 };
 
-start();
+void start();
