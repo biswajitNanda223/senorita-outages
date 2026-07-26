@@ -34,7 +34,7 @@ Fastify gives:
 ```json
 {
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
@@ -53,22 +53,35 @@ Important compiler options:
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "lib": ["ES2022"],
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "types": ["node"],
     "rootDir": "src",
     "outDir": "dist",
     "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "inlineSources": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }
 ```
 
 `strict` catches missing fields, unsafe `undefined`, wrong request shapes, and
 unhandled `unknown` errors before deployment.
+
+Use matching `module` and `moduleResolution` modes. `Node16` correctly follows
+Node package boundaries while preserving CommonJS output when `package.json`
+does not set `"type": "module"`. For native ESM, set `"type": "module"` and use
+`"module": "NodeNext"` with `"moduleResolution": "NodeNext"`.
 
 ## 3. First server
 
@@ -729,7 +742,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-COPY tsconfig.json ./
+COPY tsconfig*.json ./
 COPY src ./src
 RUN npm run build && npm prune --omit=dev
 
@@ -899,7 +912,7 @@ npm install --save-dev typescript tsx @types/node @types/pg
   "private": true,
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "start": "node dist/server.js",
     "test": "tsx --test test/**/*.test.ts"
@@ -919,26 +932,49 @@ npm install --save-dev typescript tsx @types/node @types/pg
 }
 ```
 
-`tsconfig.json`:
+`tsconfig.json` checks both application and test code:
 
 ```json
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "lib": ["ES2022"],
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "types": ["node"],
     "rootDir": ".",
-    "outDir": "dist",
     "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "test/**/*.ts"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }
 ```
 
-For a production project, use a separate `tsconfig.build.json` that includes
-only `src/`; that keeps tests out of the runtime image.
+`tsconfig.build.json` emits production code only:
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "sourceMap": true,
+    "inlineSources": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["test", "dist", "node_modules"]
+}
+```
+
+Keeping typecheck and build configurations separate prevents tests from being
+emitted into the runtime image.
 
 ### Domain types
 
