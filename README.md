@@ -33,6 +33,58 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 
 ## 🗺️ Monorepo Directory Layout
 
+### Application-first map
+
+Start with application code. Infrastructure and study material come after it:
+
+```text
+.
+├── demo-projects/
+│   ├── README.md
+│   ├── fastify-production-app/        # Complete production reference
+│   │   ├── src/                       # TypeScript source: edit this
+│   │   │   ├── app.ts                 # Fastify routes, schemas, error mapping
+│   │   │   ├── server.ts              # API process lifecycle
+│   │   │   ├── worker.ts              # Async outbox worker
+│   │   │   ├── domain.ts              # Entities, ports, domain errors
+│   │   │   ├── order-service.ts       # Business logic
+│   │   │   ├── postgres-order-repository.ts
+│   │   │   ├── redis-order-cache.ts
+│   │   │   ├── infrastructure.ts      # Connections and dependency wiring
+│   │   │   └── config.ts
+│   │   ├── test/                      # TypeScript tests
+│   │   ├── load/orders.ts             # Typed 2,000-VU k6 test
+│   │   ├── migrations/001_init.sql
+│   │   ├── tsconfig.json              # Source/test checking
+│   │   ├── tsconfig.build.json        # Production compilation
+│   │   ├── tsconfig.load.json         # k6 ESM checking
+│   │   ├── Dockerfile
+│   │   ├── compose.yaml
+│   │   └── README.md                  # HLD, LLD, scaling, commands
+│   ├── aws-ecs-fargate-app/
+│   ├── gcp-cloud-run-app/
+│   └── azure-function-app/
+├── demo-app/                          # Smaller Fastify + TypeScript demo
+├── agent-engine/                      # Fastify + TypeScript AI service
+├── manifests/                         # Kubernetes, Helm, Argo CD, cloud specs
+├── terraform/                         # Azure, AWS, GCP infrastructure
+├── cicd/                              # GitLab pipelines and scripts
+├── docs/                              # Architecture and study guides
+└── senorita-outages.code-workspace
+```
+
+### TypeScript source versus build output
+
+```text
+src/*.ts  -- npm run build -->  dist/*.js  -- node --> running service
+```
+
+Edit and review `src/**/*.ts`. The `dist/` directory is generated JavaScript
+because Node executes JavaScript in production. It is ignored by Git, rebuilt
+inside Docker, and intentionally absent from the committed directory tree.
+
+### Full repository map
+
 ```text
 .
 ├── README.md                           # Master guide, cloud comparisons, and getting started

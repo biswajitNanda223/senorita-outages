@@ -25,8 +25,30 @@ demo-projects/fastify-production-app/
 ├── tsconfig.json                      # Editor and test typechecking
 ├── tsconfig.build.json                # Production-only emission
 ├── tsconfig.load.json                 # k6 ESM TypeScript typechecking
-└── package.json                       # Build, test, API, worker commands
+├── package.json                       # Build, test, API, worker commands
+├── package-lock.json                  # Reproducible dependency versions
+├── .env.example                       # Documented local variables
+└── .dockerignore                      # Excludes source-only build context
 ```
+
+Generated after compilation, never edited:
+
+```text
+dist/
+├── app.js
+├── server.js
+├── worker.js
+├── config.js
+├── domain.js
+├── order-service.js
+├── postgres-order-repository.js
+├── redis-order-cache.js
+└── infrastructure.js
+```
+
+`src/*.ts` is the source of truth. `npm run build` compiles it to `dist/*.js`
+because production Node executes JavaScript. `dist/` is Git-ignored and the
+Docker builder recreates it on every image build.
 
 Read the code in dependency order:
 

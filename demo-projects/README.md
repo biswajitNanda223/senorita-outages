@@ -14,14 +14,21 @@ container definition, and deployment documentation.
 
 ```text
 project/
-├── src/                 # Runtime TypeScript
-├── test/                # Unit and API tests
-├── package.json         # Commands and dependencies
-├── package-lock.json    # Reproducible dependency graph
-├── tsconfig.json        # Strict typechecking
-├── Dockerfile           # Production image
-└── README.md            # Setup, architecture, deployment, checks
+├── src/                         # TypeScript source; developers edit this
+├── test/                        # TypeScript unit and API tests
+├── load/                        # Typed load-test scenarios
+├── migrations/                  # Versioned database changes
+├── package.json                 # Commands and direct dependencies
+├── package-lock.json            # Reproducible dependency graph
+├── tsconfig.json                # Editor/test typechecking
+├── tsconfig.build.json          # Production source compilation
+├── Dockerfile                   # Multi-stage production image
+├── compose.yaml                 # Local services and dependencies
+└── README.md                    # Setup, architecture, deployment, checks
 ```
+
+After `npm run build`, TypeScript generates `dist/*.js`. Do not edit or commit
+`dist/`; Node and the final Docker stage execute that generated JavaScript.
 
 The most complete implementation is
 [`fastify-production-app/`](fastify-production-app/).

@@ -10,6 +10,15 @@ For the complete runnable code—not only documentation snippets—open:
 - [Tests](../demo-projects/fastify-production-app/test/)
 - [2,000-user TypeScript load scenario](../demo-projects/fastify-production-app/load/orders.ts)
 
+Repository convention:
+
+```text
+src/**/*.ts -> tsc -> dist/**/*.js -> Node.js
+```
+
+Only `src/`, `test/`, and `load/` contain authored application code. `dist/`
+contains disposable compiler output and must not be edited or committed.
+
 ## 1. Mental model
 
 Fastify processes one request through a lifecycle:
