@@ -1439,6 +1439,9 @@ cached object until its TTL expires.
 
 ## Repository examples
 
+- [`demo-projects/fastify-production-app`](../demo-projects/fastify-production-app):
+  runnable layered API with HLD, LLD, PostgreSQL, Redis, idempotency, outbox,
+  Docker Compose, and a 2,000-virtual-user k6 scenario.
 - [`demo-app/src/server.ts`](../demo-app/src/server.ts): PostgreSQL, Redis,
   validation, static UI, error narrowing, shutdown.
 - [`agent-engine/src/server.ts`](../agent-engine/src/server.ts): typed agent

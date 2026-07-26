@@ -20,6 +20,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 |:---|:---|
 | Run the Fastify demo | [Local application setup](#2-run-an-application-locally) |
 | Learn Fastify + TypeScript | [Beginner-to-advanced Fastify guide](docs/fastify-typescript-guide.md) |
+| Build a production Fastify API | [Runnable HLD/LLD + 2,000-user reference](demo-projects/fastify-production-app/README.md) |
 | Study Azure Databricks | [Databricks study hub](docs/azure-databricks/README.md) |
 | Deploy a Databricks App | [Apps, MCP, Genie, and AI Search guide](docs/azure-databricks/apps-mcp-genie-vector-search.md) |
 | Review Kubernetes sidecars | [Sidecar pattern guide](docs/kubernetes-sidecar-pattern-guide.md) |
@@ -132,6 +133,7 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 |:---|:---|:---|
 | 🧱 **[Azure Databricks & GenAI](docs/azure-databricks/README.md)** | Study hub for data, apps, analytics, and RAG | Apps deployment, MCP URLs, Genie Agents, AI Search, Delta Lake, MLflow |
 | ⚡ **[Fastify + TypeScript](docs/fastify-typescript-guide.md)** | Beginner-to-advanced guide with diagrams and a complete coded project | Objects, classes, connections, async scaling, Docker, Compose, testing |
+| 🏗️ **[Production Fastify Reference](demo-projects/fastify-production-app/README.md)** | Runnable API with HLD, LLD, capacity model, and 2,000-VU test | PostgreSQL, Redis, idempotency, outbox, k6, horizontal scaling |
 | ⎈ **[Helm Package Manager](docs/helm-kubernetes-guide.md)** | K8s Manifest Templating & Releases | Helm v3 architecture, Go templating, `values.yaml`, release rollbacks |
 | 🚗 **[K8s Sidecar Pattern](docs/kubernetes-sidecar-pattern-guide.md)** | Multi-Container Pod Design | Shared Network/Volumes, FluentBit, Envoy Proxy, K8s 1.28+ native sidecars |
 | 🛡️ **[DB Wall, DLQ, Email & CIDR](docs/db-dlq-email-cidr-master-guide.md)** | Network Isolation, Resiliency & Subnetting | Private Endpoint DB Wall, Dead Letter Queues, Async Email, CIDR Math |
