@@ -1,7 +1,33 @@
 # Production Fastify Reference: Beginner to 2,000 Users
 
 Runnable strict-TypeScript order API plus HLD, LLD, Docker, tests, and load
-testing. Start here, then read the code in dependency order:
+testing.
+
+## Where the code is
+
+```text
+demo-projects/fastify-production-app/
+├── src/
+│   ├── app.ts                         # Fastify factory, routes, schemas, errors
+│   ├── server.ts                      # API startup and graceful shutdown
+│   ├── worker.ts                      # Horizontally scalable outbox worker
+│   ├── config.ts                      # Typed environment configuration
+│   ├── domain.ts                      # Entities, interfaces, domain errors
+│   ├── order-service.ts               # Business-use-case class
+│   ├── postgres-order-repository.ts   # SQL, transactions, idempotency, outbox
+│   ├── redis-order-cache.ts           # Cache adapter with TTL jitter
+│   └── infrastructure.ts              # Pools, clients, dependency wiring
+├── test/                              # Unit and Fastify inject tests
+├── migrations/001_init.sql            # PostgreSQL schema and indexes
+├── load/orders.js                     # k6 ramp to 2,000 concurrent users
+├── Dockerfile                         # Builder + non-root runtime
+├── compose.yaml                       # API, worker, PostgreSQL, Redis
+├── tsconfig.json                      # Editor and test typechecking
+├── tsconfig.build.json                # Production-only emission
+└── package.json                       # Build, test, API, worker commands
+```
+
+Read the code in dependency order:
 
 1. `src/domain.ts`
 2. `src/order-service.ts`
@@ -11,6 +37,19 @@ testing. Start here, then read the code in dependency order:
 6. `src/infrastructure.ts`
 7. `src/server.ts`
 8. `src/worker.ts`
+
+### Code responsibility map
+
+| Need | Open |
+|:---|:---|
+| Endpoint or schema | [`src/app.ts`](src/app.ts) |
+| Business rule | [`src/order-service.ts`](src/order-service.ts) |
+| SQL or transaction | [`src/postgres-order-repository.ts`](src/postgres-order-repository.ts) |
+| Redis caching | [`src/redis-order-cache.ts`](src/redis-order-cache.ts) |
+| Connections and wiring | [`src/infrastructure.ts`](src/infrastructure.ts) |
+| Background processing | [`src/worker.ts`](src/worker.ts) |
+| Database structure | [`migrations/`](migrations/) |
+| 2,000-user test | [`load/orders.js`](load/orders.js) |
 
 ## Run locally
 

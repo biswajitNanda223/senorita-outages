@@ -9,6 +9,10 @@
       "path": "demo-app"
     },
     {
+      "name": "PROD - Fastify Scale Lab",
+      "path": "demo-projects/fastify-production-app"
+    },
+    {
       "name": "🤖 AI · Agent Engine",
       "path": "agent-engine"
     },
@@ -189,6 +193,16 @@
           "REDIS_HOST": "localhost",
           "AGENT_WORKSPACE_BUCKET": "my-local-agent-bucket"
         }
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Debug Production Fastify API",
+        "skipFiles": ["<node_internals>/**"],
+        "program": "${workspaceFolder:PROD - Fastify Scale Lab}/src/server.ts",
+        "runtimeExecutable": "npx",
+        "runtimeArgs": ["tsx"],
+        "envFile": "${workspaceFolder:PROD - Fastify Scale Lab}/.env"
       }
     ]
   },

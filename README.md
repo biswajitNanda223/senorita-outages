@@ -113,10 +113,18 @@ This repository is a cinematic blockbuster of DevOps and DevSecOps engineering�
 │   ├── Dockerfile                      # Production multi-stage non-root build
 │   └── public/
 │       └── index.html                  # Responsive glassmorphic dashboard UI
-├── demo-projects/                      # Standardized project templates by cloud service
-│   ├── azure-function-app/             # Serverless Azure Function running Fastify HTTP trigger
-│   ├── gcp-cloud-run-app/              # Serverless GCP Cloud Run container running Fastify
-│   └── aws-ecs-fargate-app/            # Microservice task container running Fastify
+├── demo-projects/                      # Runnable examples with a project index
+│   ├── README.md                       # Project chooser and source-code links
+│   ├── fastify-production-app/         # Full HLD/LLD production reference
+│   │   ├── src/                        # API, domain, repository, cache, worker
+│   │   ├── test/                       # Unit and Fastify inject tests
+│   │   ├── migrations/                 # PostgreSQL schema and indexes
+│   │   ├── load/                       # 2,000-user k6 scenario
+│   │   ├── Dockerfile                  # Multi-stage non-root image
+│   │   └── compose.yaml                # API, worker, PostgreSQL, Redis
+│   ├── azure-function-app/             # Fastify on Azure Functions
+│   ├── gcp-cloud-run-app/              # Fastify on Cloud Run
+│   └── aws-ecs-fargate-app/            # Fastify on ECS Fargate
 └── agent-engine/                       # AI Agent Engine (Fastify + OpenTelemetry)
     ├── package.json
     ├── tsconfig.json                   # Strict TypeScript build configuration

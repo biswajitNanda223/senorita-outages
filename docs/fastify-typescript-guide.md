@@ -3,6 +3,13 @@
 This guide explains Fastify from first route to production architecture. Examples
 use strict TypeScript and match the structure used by `demo-app/`.
 
+For the complete runnable code—not only documentation snippets—open:
+
+- [Production project README](../demo-projects/fastify-production-app/README.md)
+- [Application source](../demo-projects/fastify-production-app/src/)
+- [Tests](../demo-projects/fastify-production-app/test/)
+- [2,000-user load scenario](../demo-projects/fastify-production-app/load/orders.js)
+
 ## 1. Mental model
 
 Fastify processes one request through a lifecycle:
